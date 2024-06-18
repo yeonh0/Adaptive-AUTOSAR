@@ -57,6 +57,11 @@ namespace ara
                                     if (_eventgroupEntry->TTL() > 0)
                                     {
                                         // Subscription
+                                        std::cout << "Server : Received SD Message for subscription from Client with Service ID: " 
+                                                  << _eventgroupEntry->ServiceId() << ", Instance ID: " 
+                                                  << _eventgroupEntry->InstanceId() << ", Eventgroup ID: "
+                                                  << _eventgroupEntry->EventgroupId() << std::endl; 
+
                                         processEntry(_eventgroupEntry);
                                     }
                                     else
@@ -110,6 +115,20 @@ namespace ara
 
                     _acknowledgeMessage.AddEntry(std::move(_acknowledgeEntry));
                     mCommunicationLayer->Send(_acknowledgeMessage);
+                }
+
+                void SomeIpPubSubServer::SendMessageToEventGroup(const SomeIpPubsubMessage &message)
+                {
+                    std::cout<<"message ID : "<<message.MessageId()<<std::endl;
+                    //mCommunicationLayer->Send(message.);
+                    std::vector<uint8_t> payload = message.Payload();
+                    std::cout << "Payload: ";
+                    for (const auto& byte : payload)
+                    {
+                        std::cout << std::hex << std::setw(2) << std::setfill('0') << static_cast<int>(byte) << " ";
+                    }
+                    std::cout << std::dec << std::endl; // Reset to decimal formatting
+
                 }
 
                 void SomeIpPubSubServer::Start()

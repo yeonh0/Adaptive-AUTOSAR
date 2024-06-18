@@ -1,6 +1,9 @@
 #ifndef SOMEIP_PUBSUB_SERVER
 #define SOMEIP_PUBSUB_SERVER
 
+#include <iostream>
+#include <iomanip>
+
 #include "../../helper/finite_state_machine.h"
 #include "../../helper/network_layer.h"
 #include "../sd/someip_sd_message.h"
@@ -9,6 +12,7 @@
 #include "./fsm/service_down_state.h"
 #include "./fsm/notsubscribed_state.h"
 #include "./fsm/subscribed_state.h"
+#include "./someip_pubsub_message.h"
 
 namespace ara
 {
@@ -66,7 +70,7 @@ namespace ara
                     helper::PubSubState GetState() const noexcept;
 
                     /// @brief Send All Subscriber
-                    
+                    void SendMessageToEventGroup(const SomeIpPubsubMessage &message);
 
                     /// @brief Stop the server
                     void Stop();
