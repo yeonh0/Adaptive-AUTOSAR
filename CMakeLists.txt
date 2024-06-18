@@ -12,18 +12,6 @@ set(CMAKE_ENABLE_EXPORTS 1)
 
 include(FetchContent)
 
-# Fetching GoogleTest 1.12.1 for unit testing
-FetchContent_Declare(
-  googletest
-  URL https://github.com/google/googletest/archive/58d77fa8070e8cec2dc1ed015d66b454c8d78850.zip
-)
-
-# Fetching libcurl 7.88.0 for REST API
-FetchContent_Declare(
-  libcurl
-  URL https://github.com/curl/curl/archive/3027611ca6d4cc5510d2d0fccc3e5a074e09a2fb.zip
-)
-
 # Fetching Async-BSD-Socket-Lib for network abstraction
 FetchContent_Declare(
   Async-BSD-Socket-Lib
@@ -31,16 +19,21 @@ FetchContent_Declare(
 )
 
 FetchContent_MakeAvailable(
-  googletest
-  libcurl
   Async-BSD-Socket-Lib
 )
 
 ########################################################################
 #
-# Options:
+# Find ROS2
+# find_package(ament_cmake REQUIRED)
+# find_package(rclcpp REQUIRED)
+# find_package(std_msgs REQUIRED)
 
-option(build_tests "Build all the tests." ON)
+# include_directories(
+#   include
+#   ${rclcpp_INCLUDE_DIRS}
+#   ${std_msgs_INCLUDE_DIRS}
+# )
 
 ########################################################################
 #
@@ -205,6 +198,8 @@ add_library(
   ${source_ara_com_someip_pubsub_dir}/someip_pubsub_client.cpp
   ${source_ara_com_someip_pubsub_dir}/someip_pubsub_message.h
   ${source_ara_com_someip_pubsub_dir}/someip_pubsub_message.cpp
+  ${source_ara_com_someip_pubsub_dir}/ros2_pubsub_server.h
+  ${source_ara_com_someip_pubsub_dir}/ros2_pubsub_server.cpp
   ${source_ara_com_someip_pubsub_fsm_dir}/service_down_state.h
   ${source_ara_com_someip_pubsub_fsm_dir}/service_down_state.cpp
   ${source_ara_com_someip_pubsub_fsm_dir}/notsubscribed_state.h
@@ -254,21 +249,17 @@ target_link_libraries(
 )
 
 
-if(build_tests)
-  enable_testing()
 
-  add_executable(
-    testmain
-    ${test_ara_com_someip_pubsub_dir}/main.cpp
-    ${test_ara_com_someip_pubsub_dir}/pubsub_test.cpp
-    ${test_ara_com_someip_pubsub_dir}/pubsub_test.h
-    
-  )
+add_executable(
+  testmain
+  ${test_ara_com_someip_pubsub_dir}/main.cpp
+  ${test_ara_com_someip_pubsub_dir}/pubsub_test.cpp
+  ${test_ara_com_someip_pubsub_dir}/pubsub_test.h
+  
+)
 
-  target_link_libraries(
-    testmain
-    gtest_main
-    ara_log
-  )
+target_link_libraries(
+  testmain
+  ara_log
+)
 
- endif()
