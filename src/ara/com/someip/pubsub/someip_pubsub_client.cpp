@@ -30,6 +30,18 @@ namespace ara
                     {
                         if (entry->Type() == entry::EntryType::Acknowledging)
                         {
+                            std::cout << "Client : Received SD Message for subscription from server with Service ID: " 
+                                      << entry->ServiceId() << ", Instance ID: " 
+                                      << entry->InstanceId() << std::endl;
+
+                            std::vector<uint8_t> payload = message.Payload();
+                            std::cout << "Payload: ";
+                            for (const auto& byte : payload)
+                            {
+                                std::cout << std::hex << std::setw(2) << std::setfill('0') << static_cast<int>(byte) << " ";
+                            }
+                            std::cout << std::dec << std::endl; // Reset to decimal formatting
+
                             bool _enqueued = mMessageBuffer.TryEnqueue(std::move(message));
 
                             if (_enqueued)
