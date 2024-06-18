@@ -4,10 +4,12 @@
 #include <ostream>
 #include <vector>
 #include <iostream>
+#include <memory>
 
 #include "../../../../../src/ara/com/someip/pubsub/someip_pubsub_server.h"
 #include "../../../../../src/ara/com/someip/pubsub/someip_pubsub_client.h"
 #include "../../../../../src/ara/com/someip/pubsub/someip_pubsub_message.h"
+#include "../../../../../src/ara/com/someip/pubsub/ros2_pubsub_server.h"
 
 #include "../../helper/mockup_network_layer.h"
 
@@ -35,6 +37,7 @@ namespace ara
 
                     SomeIpPubSubServer Server;
                     SomeIpPubSubClient Client;
+                    std::shared_ptr<ROS2PubSubServer> ros2Server;
 
                 public:
                     PubServerTest();
@@ -42,6 +45,7 @@ namespace ara
                     void StartServer();
                     void ServerGetState();
                     void SendEventGroup(const std::vector<uint8_t> payload);
+                    void PublishToROS2(const std::vector<uint8_t>& payload); 
 
                     void Subscribe();
                     void checksucced(sd::SomeIpSdMessage &msg);

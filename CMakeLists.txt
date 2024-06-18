@@ -5,8 +5,8 @@
 cmake_minimum_required(VERSION 3.14)
 project(Adaptive_Platform)
 
-# This AUTOSAR Adaptive Platform requires C++14
-set(CMAKE_CXX_STANDARD 14)
+# This AUTOSAR Adaptive Platform requires C++17
+set(CMAKE_CXX_STANDARD 17)
 # Enable 'rdyamic' switch to export the executable's symbols for debugging
 set(CMAKE_ENABLE_EXPORTS 1)
 
@@ -25,15 +25,23 @@ FetchContent_MakeAvailable(
 ########################################################################
 #
 # Find ROS2
-# find_package(ament_cmake REQUIRED)
-# find_package(rclcpp REQUIRED)
-# find_package(std_msgs REQUIRED)
 
-# include_directories(
-#   include
-#   ${rclcpp_INCLUDE_DIRS}
-#   ${std_msgs_INCLUDE_DIRS}
-# )
+if(NOT DEFINED ENV{AMENT_PREFIX_PATH})
+  set(ENV{AMENT_PREFIX_PATH} "/opt/ros/humble")
+endif()
+list(APPEND CMAKE_PREFIX_PATH $ENV{AMENT_PREFIX_PATH})
+
+find_package(ament_cmake REQUIRED)
+find_package(rclcpp REQUIRED)
+find_package(std_msgs REQUIRED)
+find_package(rcl_interfaces REQUIRED)
+
+include_directories(
+  include
+  ${rclcpp_INCLUDE_DIRS}
+  ${std_msgs_INCLUDE_DIRS}
+  ${rcl_interfaces_INCLUDE_DIRS}
+)
 
 ########################################################################
 #
@@ -240,6 +248,9 @@ add_library(
 target_link_libraries(
   ara_com
   async_bsd_socket_lib
+  ${rclcpp_LIBRARIES}
+  ${std_msgs_LIBRARIES}
+  ${rcl_interfaces_LIBRARIES}
 )
 
 target_link_libraries(
@@ -247,8 +258,6 @@ target_link_libraries(
   ara_core
   ara_com
 )
-
-
 
 add_executable(
   testmain
@@ -263,3 +272,9 @@ target_link_libraries(
   ara_log
 )
 
+ament_target_dependencies(
+  testmain
+  rclcpp
+  std_msgs
+  rcl_interfaces
+)

@@ -28,6 +28,7 @@ namespace ara
                              cPort), 
                       Client(&mNetworkLayer, cCounter)
                 {
+                    ros2Server = std::make_shared<ROS2PubSubServer>();  // ROS2PubSubServer 초기화
                 }
 
             ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -78,6 +79,11 @@ namespace ara
                     Server.SendMessageToEventGroup(message);
                 }
 
+                // Publish to ROS2
+                void PubServerTest::PublishToROS2(const std::vector<uint8_t>& payload)
+                {
+                    ros2Server->PublishMessage(payload);
+                }
 
 
             ////////////////////////////////////////////////////////////////////////////////////////////////////

@@ -18,7 +18,7 @@ namespace ara
                 void ROS2PubSubServer::PublishMessage(const std::vector<uint8_t>& payload)
                 {
                     // 페이로드 출력
-                    std::cout << "Payload: ";
+                    std::cout << "ROS Payload: ";
                     for (const auto &byte : payload)
                     {
                         std::cout << std::hex << std::setw(2) << std::setfill('0') << static_cast<int>(byte) << " ";

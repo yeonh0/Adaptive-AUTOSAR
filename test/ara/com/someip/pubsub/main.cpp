@@ -18,5 +18,7 @@ int main() {
 
     serverTest.SendEventGroup({0x01, 0x02, 0x03, 0x04});
 
+    serverTest.PublishToROS2({0x01, 0x02, 0x03, 0x04});
+
     return 0;
 }
