@@ -203,6 +203,8 @@ add_library(
   ${source_ara_com_someip_pubsub_dir}/someip_pubsub_server.cpp
   ${source_ara_com_someip_pubsub_dir}/someip_pubsub_client.h
   ${source_ara_com_someip_pubsub_dir}/someip_pubsub_client.cpp
+  ${source_ara_com_someip_pubsub_dir}/someip_pubsub_message.h
+  ${source_ara_com_someip_pubsub_dir}/someip_pubsub_message.cpp
   ${source_ara_com_someip_pubsub_fsm_dir}/service_down_state.h
   ${source_ara_com_someip_pubsub_fsm_dir}/service_down_state.cpp
   ${source_ara_com_someip_pubsub_fsm_dir}/notsubscribed_state.h
@@ -258,8 +260,9 @@ if(build_tests)
   add_executable(
     testmain
     ${test_ara_com_someip_pubsub_dir}/main.cpp
-    ${test_ara_com_someip_pubsub_dir}/someip_pubsub_test.cpp
-    ${test_ara_com_someip_pubsub_dir}/someip_pubsub_test.h
+    ${test_ara_com_someip_pubsub_dir}/pubsub_test.cpp
+    ${test_ara_com_someip_pubsub_dir}/pubsub_test.h
+    
   )
 
   target_link_libraries(

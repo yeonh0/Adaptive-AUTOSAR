@@ -1,9 +1,9 @@
-#include "someip_pubsub_test.h"
+#include "pubsub_test.h"
 
 int main() {
     using namespace ara::com::someip;
 
-    pubsub::SomeIpPubServerTest serverTest;
+    pubsub::PubServerTest serverTest;
     serverTest.StartServer();
 
     serverTest.ServerGetState();
@@ -15,6 +15,8 @@ int main() {
     serverTest.checksucced(_message);
 
     serverTest.ServerGetState();
+
+    serverTest.SendEventGroup({0x01, 0x02, 0x03, 0x04});
 
     return 0;
 }
