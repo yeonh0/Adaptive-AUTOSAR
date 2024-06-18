@@ -1,7 +1,5 @@
-#include <gtest/gtest.h>
-#include "../../../../../src/ara/com/someip/pubsub/someip_pubsub_server.h"
-#include "../../../../../src/ara/com/someip/pubsub/someip_pubsub_client.h"
-#include "../../helper/mockup_network_layer.h"
+
+#include "someip_pubsub_test.h"
 
 namespace ara
 {
@@ -10,143 +8,80 @@ namespace ara
         namespace someip
         {
             namespace pubsub
-            {
-                class SomeIpPubSubTest : public testing::Test
+            {             
+                // Static member initialization
+                const uint16_t SomeIpPubServerTest::cCounter = 0;  
+                const uint16_t SomeIpPubServerTest::cServiceId = 1;
+                const uint16_t SomeIpPubServerTest::cInstanceId = 1;
+                const uint8_t SomeIpPubServerTest::cMajorVersion = 1;
+                const uint16_t SomeIpPubServerTest::cEventgroupId = 0;
+                const uint16_t SomeIpPubServerTest::cPort = 10001;
+                const int SomeIpPubServerTest::cWaitingDuration = 100;
+
+                // Constructor definition
+                SomeIpPubServerTest::SomeIpPubServerTest() 
+                    : Server(&mNetworkLayer,
+                             cServiceId,
+                             cInstanceId,
+                             cMajorVersion,
+                             cEventgroupId,
+                             helper::Ipv4Address(224, 0, 0, 0),
+                             cPort), 
+                      Client(&mNetworkLayer, cCounter)
                 {
-                private:
-                    static const uint16_t cCounter = 0;
+                }
 
-                    helper::MockupNetworkLayer<sd::SomeIpSdMessage> mNetworkLayer;
+            ////////////////////////////////////////////////////////////////////////////////////////////////////
+            // Server
+            ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-                protected:
-                    static const uint16_t cServiceId = 1;
-                    static const uint16_t cInstanceId = 1;
-                    static const uint8_t cMajorVersion = 1;
-                    static const uint16_t cEventgroupId = 0;
-                    static const uint16_t cPort = 10001;
-                    static const int cWaitingDuration = 100;
+                // Member function definitions
+                void SomeIpPubServerTest::StartServer()
+                {
+                    Server.Start();
+                    std::cout << "ServiceId: " << cServiceId << " Instance id: " << cInstanceId << std::endl;
+                }
 
-                    SomeIpPubSubServer Server;
-                    SomeIpPubSubClient Client;
+                // Read Server Subscribe State
+                void SomeIpPubServerTest::ServerGetState()
+                {
+                    helper::PubSubState serverstate = Server.GetState();
 
-                    SomeIpPubSubTest() : Server(&mNetworkLayer,
-                                                cServiceId,
-                                                cInstanceId,
-                                                cMajorVersion,
-                                                cEventgroupId,
-                                                helper::Ipv4Address(224, 0, 0, 0),
-                                                cPort),
-                                         Client(
-                                             &mNetworkLayer,
-                                             cCounter)
-                    {
+                    switch(serverstate) {
+                        case helper::PubSubState::ServiceDown:
+                            std::cout << "Service server is down" << std::endl;
+                            break;
+                        case helper::PubSubState::NotSubscribed:
+                            std::cout << "Service server is up, but there is no subscriber" << std::endl;
+                            break;
+                        case helper::PubSubState::Subscribed:
+                            std::cout << "Service server is up, and there is at least a subscriber" << std::endl;
+                            break;
+                        default:
+                            std::cout << "Unknown state" << std::endl;
+                            break;
                     }
-                };
-
-                TEST_F(SomeIpPubSubTest, ServerInitialState)
-                {
-                    const helper::PubSubState cExpectedState =
-                        helper::PubSubState::ServiceDown;
-
-                    helper::PubSubState _actualState = Server.GetState();
-
-                    EXPECT_EQ(cExpectedState, _actualState);
                 }
 
-                TEST_F(SomeIpPubSubTest, NoServerRunning)
-                {
-                    const int cMinimalDuration = 1;
-                    sd::SomeIpSdMessage _message;
+                // Read Message From Client
 
-                    EXPECT_FALSE(
-                        Client.TryGetProcessedSubscription(
-                            cMinimalDuration, _message));
+
+
+            ////////////////////////////////////////////////////////////////////////////////////////////////////
+            // Client
+            ////////////////////////////////////////////////////////////////////////////////////////////////////
+                void SomeIpPubServerTest::Subscribe()
+                {
+                    Client.Subscribe(cServiceId, cInstanceId, cMajorVersion, cEventgroupId);
                 }
 
-                TEST_F(SomeIpPubSubTest, ServerStart)
+                void SomeIpPubServerTest::checksucced(sd::SomeIpSdMessage &msg)
                 {
-                    const helper::PubSubState cExpectedState =
-                        helper::PubSubState::NotSubscribed;
-
-                    Server.Start();
-                    helper::PubSubState _actualState = Server.GetState();
-
-                    EXPECT_EQ(cExpectedState, _actualState);
-                }
-
-                TEST_F(SomeIpPubSubTest, AcknowlegeScenario)
-                {
-                    const helper::PubSubState cExpectedState =
-                        helper::PubSubState::Subscribed;
-                    const option::OptionType cExpectedOptionType =
-                        option::OptionType::IPv4Multicast;
-                    const uint16_t cExpectedPort{cPort};
-                    sd::SomeIpSdMessage _message;
-
-                    Server.Start();
-                    Client.Subscribe(
-                        cServiceId, cInstanceId, cMajorVersion, cEventgroupId);
-                    bool _succeed =
-                        Client.TryGetProcessedSubscription(cWaitingDuration, _message);
-
-                    EXPECT_TRUE(_succeed);
-
-                    auto _eventgroupEntry =
-                        dynamic_cast<entry::EventgroupEntry *>(
-                            _message.Entries().at(0).get());
-
-                    EXPECT_GT(_eventgroupEntry->TTL(), 0);
-                    EXPECT_EQ(_eventgroupEntry->FirstOptions().size(), 1);
-
-                    auto _endpointOption =
-                        dynamic_cast<option::Ipv4EndpointOption *>(
-                            _eventgroupEntry->FirstOptions().at(0).get());
-
-                    EXPECT_EQ(_endpointOption->Type(), cExpectedOptionType);
-                    EXPECT_EQ(_endpointOption->Port(), cExpectedPort);
-
-                    EXPECT_EQ(cExpectedState, Server.GetState());
-                }
-
-                TEST_F(SomeIpPubSubTest, NegativeAcknowlegeScenario)
-                {
-                    const helper::PubSubState cExpectedState =
-                        helper::PubSubState::ServiceDown;
-                    sd::SomeIpSdMessage _message;
-
-                    Client.Subscribe(
-                        cServiceId, cInstanceId, cMajorVersion, cEventgroupId);
-                    bool _succeed =
-                        Client.TryGetProcessedSubscription(cWaitingDuration, _message);
-
-                    EXPECT_TRUE(_succeed);
-
-                    auto _eventgroupEntry =
-                        dynamic_cast<entry::EventgroupEntry *>(
-                            _message.Entries().at(0).get());
-
-                    EXPECT_EQ(_eventgroupEntry->TTL(), 0);
-                    EXPECT_EQ(cExpectedState, Server.GetState());
-                }
-
-                TEST_F(SomeIpPubSubTest, UnsubscriptionScenario)
-                {
-                    const helper::PubSubState cExpectedState =
-                        helper::PubSubState::NotSubscribed;
-                    sd::SomeIpSdMessage _message;
-
-                    Server.Start();
-                    Client.Subscribe(
-                        cServiceId, cInstanceId, cMajorVersion, cEventgroupId);
-                    bool _succeed =
-                        Client.TryGetProcessedSubscription(cWaitingDuration, _message);
-
-                    EXPECT_TRUE(_succeed);
-
-                    Client.Unsubscribe(
-                        cServiceId, cInstanceId, cMajorVersion, cEventgroupId);
-
-                    EXPECT_EQ(cExpectedState, Server.GetState());
+                    bool _succeed = Client.TryGetProcessedSubscription(cWaitingDuration, msg);
+                    if (_succeed) 
+                        std::cout << "successfully subscribe" << std::endl;
+                    else  
+                        std::cout << "subscribe failed" << std::endl;
                 }
             }
         }

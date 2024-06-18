@@ -65,6 +65,9 @@ namespace ara
                     /// @returns Server machine state
                     helper::PubSubState GetState() const noexcept;
 
+                    /// @brief Send All Subscriber
+                    
+
                     /// @brief Stop the server
                     void Stop();
                 };
