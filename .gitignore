@@ -32,6 +32,8 @@ Makefile
 *.dylib
 *.dll
 *.exe
+*.ini
+*.cmake
 
 # Ignore other generated files
 *.log
@@ -40,3 +42,8 @@ Makefile
 *.pdb
 *.ilk
 *.ds_store
+
+# Ignore specific directories
+ament_cmake_core/stamps
+ament_cmake_package_templates
+ament_cmake_uninstall_target

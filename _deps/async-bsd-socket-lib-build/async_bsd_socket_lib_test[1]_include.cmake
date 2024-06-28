@@ -1,5 +1,0 @@
-if(EXISTS "/home/jo/Adaptive-AUTOSAR/_deps/async-bsd-socket-lib-build/async_bsd_socket_lib_test[1]_tests.cmake")
-  include("/home/jo/Adaptive-AUTOSAR/_deps/async-bsd-socket-lib-build/async_bsd_socket_lib_test[1]_tests.cmake")
-else()
-  add_test(async_bsd_socket_lib_test_NOT_BUILT async_bsd_socket_lib_test_NOT_BUILT)
-endif()
