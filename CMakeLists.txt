@@ -34,13 +34,17 @@ list(APPEND CMAKE_PREFIX_PATH $ENV{AMENT_PREFIX_PATH})
 find_package(ament_cmake REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(std_msgs REQUIRED)
+find_package(std_srvs REQUIRED)
 find_package(rcl_interfaces REQUIRED)
+find_package(rosidl_typesupport_cpp REQUIRED)
 
 include_directories(
   include
   ${rclcpp_INCLUDE_DIRS}
   ${std_msgs_INCLUDE_DIRS}
+  ${std_srvs_INCLUDE_DIRS}
   ${rcl_interfaces_INCLUDE_DIRS}
+  ${rosidl_typesupport_cpp_INCLUDE_DIRS}
 )
 
 ########################################################################
@@ -92,6 +96,11 @@ set(source_ara_com_someip_pubsub_dir
 set(source_ara_com_someip_pubsub_fsm_dir
   "${CMAKE_SOURCE_DIR}/src/ara/com/someip/pubsub/fsm")
 
+set(source_ara_com_ros2_pubsub_dir
+  "${CMAKE_SOURCE_DIR}/src/ara/com/ros2/pubsub")
+
+set(source_ara_com_ros2_rpc_dir
+  "${CMAKE_SOURCE_DIR}/src/ara/com/ros2/rpc")
 
 # Test Directories:
 
@@ -124,6 +133,12 @@ set(test_ara_com_someip_sd_dir
 
 set(test_ara_com_someip_sd_fsm_dir
   "${CMAKE_SOURCE_DIR}/test/ara/com/someip/sd/fsm")
+
+set(test_ara_com_pubsub_dir
+  "${CMAKE_SOURCE_DIR}/test/ara/com/pubsub")
+
+set(test_ara_com_rpc_dir
+  "${CMAKE_SOURCE_DIR}/test/ara/com/rpc")
 
 ########################################################################
 
@@ -200,14 +215,20 @@ add_library(
   ${source_ara_com_someip_rpc_dir}/rpc_client.cpp
   ${source_ara_com_someip_rpc_dir}/socket_rpc_client.h
   ${source_ara_com_someip_rpc_dir}/socket_rpc_client.cpp
+  # ROS2 RPC
+  ${source_ara_com_ros2_rpc_dir}/ros2_rpc_server.h
+  ${source_ara_com_ros2_rpc_dir}/ros2_rpc_server.cpp
+
   ${source_ara_com_someip_pubsub_dir}/someip_pubsub_server.h
   ${source_ara_com_someip_pubsub_dir}/someip_pubsub_server.cpp
   ${source_ara_com_someip_pubsub_dir}/someip_pubsub_client.h
   ${source_ara_com_someip_pubsub_dir}/someip_pubsub_client.cpp
   ${source_ara_com_someip_pubsub_dir}/someip_pubsub_message.h
   ${source_ara_com_someip_pubsub_dir}/someip_pubsub_message.cpp
-  ${source_ara_com_someip_pubsub_dir}/ros2_pubsub_server.h
-  ${source_ara_com_someip_pubsub_dir}/ros2_pubsub_server.cpp
+   # ROS2 PUBSUB
+  ${source_ara_com_ros2_pubsub_dir}/ros2_pubsub_server.h
+  ${source_ara_com_ros2_pubsub_dir}/ros2_pubsub_server.cpp
+
   ${source_ara_com_someip_pubsub_fsm_dir}/service_down_state.h
   ${source_ara_com_someip_pubsub_fsm_dir}/service_down_state.cpp
   ${source_ara_com_someip_pubsub_fsm_dir}/notsubscribed_state.h
@@ -251,6 +272,8 @@ target_link_libraries(
   ${rclcpp_LIBRARIES}
   ${std_msgs_LIBRARIES}
   ${rcl_interfaces_LIBRARIES}
+  ${std_srvs_LIBRARIES}
+  ${rosidl_typesupport_cpp_LIBRARIES}
 )
 
 target_link_libraries(
@@ -260,21 +283,37 @@ target_link_libraries(
 )
 
 add_executable(
-  testmain
-  ${test_ara_com_someip_pubsub_dir}/main.cpp
-  ${test_ara_com_someip_pubsub_dir}/pubsub_test.cpp
-  ${test_ara_com_someip_pubsub_dir}/pubsub_test.h
-  
+  pubsubtest
+  ${test_ara_com_pubsub_dir}/main.cpp
+  ${test_ara_com_pubsub_dir}/pubsub_test.cpp
+  ${test_ara_com_pubsub_dir}/pubsub_test.h
 )
 
 target_link_libraries(
-  testmain
+  pubsubtest
   ara_log
 )
 
 ament_target_dependencies(
-  testmain
+  pubsubtest
   rclcpp
   std_msgs
   rcl_interfaces
 )
+
+# add_executable(
+#   rpctest
+#   ${test_ara_com_rpc_dir}/rpc_test.cpp
+#   ${test_ara_com_rpc_dir}/rpc_server_test.cpp
+#   ${test_ara_com_rpc_dir}/rpc_server_test.h
+#   ${test_ara_com_rpc_dir}/rpc_client_test.cpp
+#   ${test_ara_com_rpc_dir}/rpc_client_test.h
+# )
+
+# target_link_libraries(
+#   rpctest
+#   rclcpp 
+#   std_srvs
+#   ara_log
+#   rosidl_typesupport_cpp
+# )
