@@ -1,3 +1,0 @@
-/home/jo/Adaptive-AUTOSAR/_deps/async-bsd-socket-lib-subbuild/CMakeFiles/async-bsd-socket-lib-populate.dir
-/home/jo/Adaptive-AUTOSAR/_deps/async-bsd-socket-lib-subbuild/CMakeFiles/edit_cache.dir
-/home/jo/Adaptive-AUTOSAR/_deps/async-bsd-socket-lib-subbuild/CMakeFiles/rebuild_cache.dir

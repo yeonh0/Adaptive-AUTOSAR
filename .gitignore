@@ -7,3 +7,36 @@ build/
 
 # Doxygen HTML
 doc/html/
+
+# Ignore build directories
+/build/
+/bin/
+/lib/
+/obj/
+
+# Ignore CMake generated files
+CMakeFiles/
+CMakeCache.txt
+cmake_install.cmake
+Makefile
+
+# Ignore Make build files
+*.o
+*.lo
+*.la
+*.al
+.libs/
+*.so
+*.so.*
+*.a
+*.dylib
+*.dll
+*.exe
+
+# Ignore other generated files
+*.log
+*.pyc
+*.pyo
+*.pdb
+*.ilk
+*.ds_store
