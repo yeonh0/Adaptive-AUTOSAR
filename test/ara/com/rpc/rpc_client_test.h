@@ -1,37 +1,39 @@
 #ifndef RPC_CLIENT_TEST_H
 #define RPC_CLIENT_TEST_H
 
-#include "../../../../../src/ara/com/someip/rpc/rpc_client.h"
+#include <ostream>
+#include <vector>
+#include <iostream>
+#include <memory>
+#include <chrono>
+#include <thread>
+
+// Include SOMEIP RPC Client
+#include "../../../../src/ara/com/someip/rpc/socket_rpc_client.h"
 
 namespace ara
 {
     namespace com
     {
-        namespace someip
+        namespace rpc
         {
-            namespace rpc
+            class RpcClientTest
             {
-                class RpcClientTest : public RpcClient
-                {
-                private:
-                    void handleResponse(const SomeIpMessage &response) const;
+            private:
 
-                protected:
-                    const uint16_t cServiceId{1};
-                    const uint16_t cMethodId{1};
-                    static const uint8_t cProtocolVersion{1};
-                    static const uint8_t cInterfaceVersion{1};
-                    mutable uint16_t LastSessionId;
+            protected:
+                static AsyncBsdSocketLib::Poller *poller;
+                static const std::string ipAddress;
+                static const uint16_t port;
+                static const uint8_t protocolVersion;
+                static const uint8_t interfaceVersion;
+                
+                someip::rpc::SocketRpcClient someipClient;
 
-                public:
-                    RpcClientTest();
-
-                    void Send(const std::vector<uint8_t> &payload) override;
-            
-                public:
-                    using RpcClient::Send;
-                };
-            }
+            public:
+                RpcClientTest();
+                static void setPoller(AsyncBsdSocketLib::Poller* p);
+            };
         }
     }
 }

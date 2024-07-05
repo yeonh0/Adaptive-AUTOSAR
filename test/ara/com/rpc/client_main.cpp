@@ -5,7 +5,15 @@
 using namespace ara::com::someip;
 
 int main() {
+    AsyncBsdSocketLib::Poller pollerInstance;
+    ara::com::rpc::RpcClientTest::setPoller(&pollerInstance);
 
+    ara::com::rpc::RpcClientTest clientTest;
+
+    while(1) {
+        // clientTest.onAccept();
+        std::this_thread::sleep_for(std::chrono::seconds(2));
+    }
 }
 
 // const uint8_t RpcServerTest::cProtocolVersion;

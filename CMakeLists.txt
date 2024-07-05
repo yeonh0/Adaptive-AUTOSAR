@@ -313,6 +313,18 @@ target_link_libraries(
   ara_log
 )
 
+add_executable(
+  rpcclienttest
+  ${test_ara_com_rpc_dir}/client_main.cpp
+  ${test_ara_com_rpc_dir}/rpc_client_test.cpp
+  ${test_ara_com_rpc_dir}/rpc_client_test.h
+)
+
+target_link_libraries(
+  rpcclienttest
+  ara_log
+)
+
 # target_link_libraries(
 #   rpctest
 #   rclcpp 
