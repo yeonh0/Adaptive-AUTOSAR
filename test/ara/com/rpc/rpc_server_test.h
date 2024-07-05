@@ -1,48 +1,59 @@
 #ifndef RPC_SERVER_TEST_H
 #define RPC_SERVER_TEST_H
 
-#include "../../../../../src/ara/com/someip/rpc/rpc_server.h"
+#include <ostream>
+#include <vector>
+#include <iostream>
+#include <memory>
+#include <chrono>
+#include <thread>
+
+// Include SOMEIP RPC Server
+#include "../../../../src/ara/com/someip/rpc/socket_rpc_server.h"
 
 namespace ara
 {
     namespace com
     {
-        namespace someip
+        namespace rpc
         {
-            namespace rpc
+            class RpcServerTest
             {
-                class RpcServerTest : public RpcServer
-                {
-                private:
-                    bool handleWithTrue(
-                        const std::vector<uint8_t> &rpcRequestPdu,
-                        std::vector<uint8_t> &rpcResponsePdu) const;
+            private:
+                // bool handleWithTrue(
+                //     const std::vector<uint8_t> &rpcRequestPdu,
+                //     std::vector<uint8_t> &rpcResponsePdu) const;
 
-                    bool handleWithFalse(
-                        const std::vector<uint8_t> &rpcRequestPdu,
-                        std::vector<uint8_t> &rpcResponsePdu) const;
+                // bool handleWithFalse(
+                //     const std::vector<uint8_t> &rpcRequestPdu,
+                //     std::vector<uint8_t> &rpcResponsePdu) const;
 
-                protected:
-                    const uint16_t cServiceId{1};
-                    const uint16_t cTrueMethodId{1};
-                    const uint16_t cFalseMethodId{2};
-                    const uint16_t cClientId{2};
-                    const uint16_t cSessionId{1};
-                    const std::vector<uint8_t> cRpcPayload;
-                    static const uint8_t cProtocolVersion{1};
-                    static const uint8_t cInterfaceVersion{1};
 
-                public:
-                    RpcServerTest();
+            protected:
+                static AsyncBsdSocketLib::Poller *poller;
+                static const std::string ipAddress;
+                static const uint16_t port;
+                static const uint8_t protocolVersion;
+                static const uint8_t interfaceVersion;
 
-                    bool RPCTryInvokeHandler(const std::vector<uint8_t> &requestPayload, std::vector<uint8_t> &responsePayload) const
-                    {
-                        return TryInvokeHandler(requestPayload, responsePayload);
-                    }
+                someip::rpc::SocketRpcServer someipServer;
 
-                    uint32_t GetMessageId(uint16_t serviceId, uint16_t methodId);
-                };
-            }
+
+            public:
+                RpcServerTest();
+                static void setPoller(AsyncBsdSocketLib::Poller* p);
+                static void onAccept();
+
+                //void ServerGetState();
+                //void RegisterCallback(const std::vector<uint8_t> payload);
+
+                // bool RPCTryInvokeHandler(const std::vector<uint8_t> &requestPayload, std::vector<uint8_t> &responsePayload) const
+                // {
+                //     return TryInvokeHandler(requestPayload, responsePayload);
+                // }
+
+                uint32_t GetMessageId(uint16_t serviceId, uint16_t methodId);
+            };
         }
     }
 }

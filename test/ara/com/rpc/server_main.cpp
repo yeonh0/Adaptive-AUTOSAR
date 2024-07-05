@@ -1,40 +1,17 @@
-#include <iostream>
-
 #include "rpc_server_test.h"
 
 using namespace ara::com::someip;
 
 int main() {
-    rpc::RpcServerTest rpcServer;
+    AsyncBsdSocketLib::Poller pollerInstance;
+    ara::com::rpc::RpcServerTest::setPoller(&pollerInstance);
 
-    const SomeIpReturnCode cExpectedResult{SomeIpReturnCode::eOK};
-    
-    uint16_t ServiceId{1};
-    uint16_t TrueMethodId{1};
-    uint16_t ClientId{1};
-    uint16_t SessionId{1};
-    uint8_t ProtocolVersion{1};
-    uint8_t InterfaceVersion{1};
+    ara::com::rpc::RpcServerTest serverTest;
 
-    uint32_t _messageId{rpcServer.GetMessageId(ServiceId, TrueMethodId)};
-
-    std::vector<uint8_t> RpcPayload;
-    rpc::SomeIpRpcMessage _request(
-                    _messageId,
-                    ClientId,
-                    SessionId,
-                    ProtocolVersion,
-                    InterfaceVersion,
-                    RpcPayload);
-                    
-    std::vector<uint8_t> _responsePayload;
-    bool _handled{rpcServer.RPCTryInvokeHandler(_request.Payload(), _responsePayload)};
-
-    rpc::SomeIpRpcMessage _response{rpc::SomeIpRpcMessage::Deserialize(_responsePayload)};
-    
-    SomeIpReturnCode _actualResult{_response.ReturnCode()};
-
-    if(_actualResult == cExpectedResult) std::cout << "good" << std::endl;
+    while(1) {
+        serverTest.onAccept();
+        std::this_thread::sleep_for(std::chrono::seconds(2));
+    }
 }
 
 // const uint8_t RpcServerTest::cProtocolVersion;

@@ -301,14 +301,17 @@ ament_target_dependencies(
   rcl_interfaces
 )
 
-# add_executable(
-#   rpctest
-#   ${test_ara_com_rpc_dir}/rpc_test.cpp
-#   ${test_ara_com_rpc_dir}/rpc_server_test.cpp
-#   ${test_ara_com_rpc_dir}/rpc_server_test.h
-#   ${test_ara_com_rpc_dir}/rpc_client_test.cpp
-#   ${test_ara_com_rpc_dir}/rpc_client_test.h
-# )
+add_executable(
+  rpcservertest
+  ${test_ara_com_rpc_dir}/server_main.cpp
+  ${test_ara_com_rpc_dir}/rpc_server_test.cpp
+  ${test_ara_com_rpc_dir}/rpc_server_test.h
+)
+
+target_link_libraries(
+  rpcservertest
+  ara_log
+)
 
 # target_link_libraries(
 #   rpctest
