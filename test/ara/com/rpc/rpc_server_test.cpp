@@ -8,34 +8,37 @@ namespace ara
     {
         namespace rpc
         {
-            AsyncBsdSocketLib::Poller* RpcServerTest::poller = nullptr;
-            const std::string RpcServerTest::ipAddress = "0.0.0.0";
-            const uint16_t RpcServerTest::port{1234};
-            const uint8_t RpcServerTest::protocolVersion{1};
-            const uint8_t RpcServerTest::interfaceVersion{1};
-
-            RpcServerTest::RpcServerTest()
-                : someipServer(poller, ipAddress, port, protocolVersion, interfaceVersion)
+            RpcServerTest::RpcServerTest(
+                 AsyncBsdSocketLib::Poller *poller,
+                std::string ipAddress,
+                uint16_t port,
+                uint8_t protocolVersion,
+                uint8_t interfaceVersion = 1)
+                : SocketRpcServer(poller, ipAddress, port, protocolVersion, interfaceVersion)
             {
-                cout << "someip rpc server start" << endl;
-            }
-
-            void RpcServerTest::setPoller(AsyncBsdSocketLib::Poller* p) {
-                poller = p;
-            }
-
-            void RpcServerTest::onAccept()
-            {
-                cout << "start to accept clients" << endl;
-            }
-
-            uint32_t RpcServerTest::GetMessageId(uint16_t serviceId, uint16_t methodId)
-            {
-                
-                return 0;
+                cout << "Server on" << endl;
             }
         }
+    }
+}
+            // void RpcServerTest::readMsg()
+            // {
+            //     if (socketRpcServer)
+            //     {
+            //         socketRpcServer->onReceive(); // Directly call onReceive
+            //     }
+            //     else
+            //     {
+            //         std::cerr << "SocketRpcServer is not set." << std::endl;
+            //     }
+            // }
 
+        //     uint32_t RpcServerTest::GetMessageId(uint16_t serviceId, uint16_t methodId)
+        //     {
+                
+        //         return 0;
+        //     }
+        // }
 
         // namespace someip
         // {
@@ -83,5 +86,3 @@ namespace ara
         //         }
         //     }
         // }
-    }
-}

@@ -5,6 +5,9 @@
 #include "../../helper/concurrent_queue.h"
 #include "./rpc_server.h"
 
+#include <iostream>
+#include <iomanip>
+
 namespace ara
 {
     namespace com

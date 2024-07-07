@@ -17,7 +17,7 @@ namespace ara
     {
         namespace rpc
         {
-            class RpcServerTest
+            class RpcServerTest : public ara::com::someip::rpc::SocketRpcServer
             {
             private:
                 // bool handleWithTrue(
@@ -27,22 +27,15 @@ namespace ara
                 // bool handleWithFalse(
                 //     const std::vector<uint8_t> &rpcRequestPdu,
                 //     std::vector<uint8_t> &rpcResponsePdu) const;
+                // someip::rpc::SocketRpcServer *socketRpcServer;
 
 
             protected:
-                static AsyncBsdSocketLib::Poller *poller;
-                static const std::string ipAddress;
-                static const uint16_t port;
-                static const uint8_t protocolVersion;
-                static const uint8_t interfaceVersion;
-
-                someip::rpc::SocketRpcServer someipServer;
-
 
             public:
-                RpcServerTest();
-                static void setPoller(AsyncBsdSocketLib::Poller* p);
-                static void onAccept();
+                RpcServerTest(AsyncBsdSocketLib::Poller *poller, std::string ipAddress, uint16_t port, uint8_t protocolVersion, uint8_t interfaceVersion);
+
+                static void readMsg();
 
                 //void ServerGetState();
                 //void RegisterCallback(const std::vector<uint8_t> payload);

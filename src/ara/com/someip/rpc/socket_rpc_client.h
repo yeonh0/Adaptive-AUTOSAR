@@ -24,7 +24,6 @@ namespace ara
                     AsyncBsdSocketLib::Poller *const mPoller;
                     AsyncBsdSocketLib::TcpClient mClient;
 
-                    void onSend();
                     void onReceive();
 
                 protected:
@@ -45,6 +44,8 @@ namespace ara
                         uint8_t protocolVersion,
                         uint8_t interfaceVersion = 1);
 
+                    void onSend();
+                    
                     virtual ~SocketRpcClient() override;
                 };
             }

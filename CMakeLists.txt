@@ -215,6 +215,11 @@ add_library(
   ${source_ara_com_someip_rpc_dir}/rpc_client.cpp
   ${source_ara_com_someip_rpc_dir}/socket_rpc_client.h
   ${source_ara_com_someip_rpc_dir}/socket_rpc_client.cpp
+
+  # SOMEIP RPC
+  ${source_ara_com_someip_rpc_dir}/someip_rpc_client.h
+  ${source_ara_com_someip_rpc_dir}/someip_rpc_client.cpp
+
   # ROS2 RPC
   ${source_ara_com_ros2_rpc_dir}/ros2_rpc_server.h
   ${source_ara_com_ros2_rpc_dir}/ros2_rpc_server.cpp
@@ -314,14 +319,14 @@ target_link_libraries(
 )
 
 add_executable(
-  rpcclienttest
-  ${test_ara_com_rpc_dir}/client_main.cpp
-  ${test_ara_com_rpc_dir}/rpc_client_test.cpp
-  ${test_ara_com_rpc_dir}/rpc_client_test.h
+  rpc_client
+  ${test_ara_com_rpc_dir}/client.cpp
+  ${test_ara_com_rpc_dir}/proxy.cpp
+  ${test_ara_com_rpc_dir}/proxy.h
 )
 
 target_link_libraries(
-  rpcclienttest
+  rpc_client
   ara_log
 )
 

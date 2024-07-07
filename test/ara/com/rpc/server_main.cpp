@@ -1,15 +1,17 @@
 #include "rpc_server_test.h"
 
-using namespace ara::com::someip;
+using namespace ara::com::rpc;
 
 int main() {
-    AsyncBsdSocketLib::Poller pollerInstance;
-    ara::com::rpc::RpcServerTest::setPoller(&pollerInstance);
+    AsyncBsdSocketLib::Poller poller;
+    std::string serverIpAddress = "0.0.0.0";
+    uint16_t serverPort = 33333;
+    uint8_t protocolVersion = 1;
+    uint8_t interfaceVersion = 1;
 
-    ara::com::rpc::RpcServerTest serverTest;
+    RpcServerTest server(&poller, serverIpAddress, serverPort, protocolVersion, interfaceVersion);
 
-    while(1) {
-        serverTest.onAccept();
+    while (1) {
         std::this_thread::sleep_for(std::chrono::seconds(2));
     }
 }

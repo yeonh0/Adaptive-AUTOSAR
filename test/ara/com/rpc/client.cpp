@@ -1,17 +1,18 @@
-#include <iostream>
+#include "proxy.h"
 
-#include "rpc_client_test.h"
+using namespace ara::com;
 
-using namespace ara::com::someip;
+    uint16_t serviceId = 0x1234;
+    uint16_t methodId = 0x5678;
+    uint16_t clientId = 0x0001;
+
+    std::vector<uint8_t> rpcPayload = {'H', 'e', 'l', 'l', 'o', ' ', 'S', 'O', 'M', 'E', '/', 'I', 'P'};
 
 int main() {
-    AsyncBsdSocketLib::Poller pollerInstance;
-    ara::com::rpc::RpcClientTest::setPoller(&pollerInstance);
+    rpc::myProxy TestProxy;
 
-    ara::com::rpc::RpcClientTest clientTest;
-
-    while(1) {
-        // clientTest.onAccept();
+    while (1) {
+        TestProxy.CallService(serviceId, methodId, clientId, rpcPayload);
         std::this_thread::sleep_for(std::chrono::seconds(2));
     }
 }
