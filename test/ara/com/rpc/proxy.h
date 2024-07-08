@@ -34,8 +34,6 @@ namespace ara
                 void SetSpeed(
                     std::vector<uint8_t> rpcPayload,
                     std::vector<uint8_t> rpcResponse);
-
-                void SetSpeedCallback();
             };
         }
     }

@@ -36,11 +36,6 @@ namespace ara
                 // Receive Msg -> Check payload and call handler
                 onReceive();
             }
-
-            void SomeIpRpcClient::setHandler(uint16_t serviceId, uint16_t methodId, HandlerType handler)
-            {
-                RpcClient::SetHandler(serviceId, methodId, handler);
-            }
         }
     }
 }

@@ -30,8 +30,6 @@ namespace ara
                 
                 // RpcClient::Send -> Send SOME/IP RPC Msg
                 void callMethodWithReply(uint16_t serviceId, uint16_t methodId, uint16_t clientId, const std::vector<uint8_t> &rpcPayload);
-
-                void setHandler(uint16_t serviceId, uint16_t methodId, HandlerType handler);
             };
         }
     }

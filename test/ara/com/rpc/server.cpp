@@ -1,18 +1,18 @@
-#include "rpc_server_test.h"
+#include "skeleton.h"
 
-using namespace ara::com::rpc;
+using namespace ara::com;
 
 int main() {
-    AsyncBsdSocketLib::Poller poller;
-    std::string serverIpAddress = "0.0.0.0";
-    uint16_t serverPort = 33333;
-    uint8_t protocolVersion = 1;
-    uint8_t interfaceVersion = 1;
 
-    RpcServerTest server(&poller, serverIpAddress, serverPort, protocolVersion, interfaceVersion);
+    // --- 1. Instantiate the skeleton implementation. ---
+    rpc::mySkeleton TestSkeleton;
 
+    // --- 2. Register services.
+
+    // --- 3. Main loop. Do nothing. ---
     while (1) {
-        std::this_thread::sleep_for(std::chrono::seconds(2));
+        TestSkeleton.onr();
+        std::this_thread::sleep_for(std::chrono::seconds(1));
     }
 }
 

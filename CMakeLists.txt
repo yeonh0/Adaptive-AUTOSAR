@@ -219,6 +219,8 @@ add_library(
   # SOMEIP RPC
   ${source_ara_com_someip_rpc_dir}/someip_rpc_client.h
   ${source_ara_com_someip_rpc_dir}/someip_rpc_client.cpp
+  ${source_ara_com_someip_rpc_dir}/someip_rpc_server.h
+  ${source_ara_com_someip_rpc_dir}/someip_rpc_server.cpp
 
   # ROS2 RPC
   ${source_ara_com_ros2_rpc_dir}/ros2_rpc_server.h
@@ -307,14 +309,14 @@ ament_target_dependencies(
 )
 
 add_executable(
-  rpcservertest
-  ${test_ara_com_rpc_dir}/server_main.cpp
-  ${test_ara_com_rpc_dir}/rpc_server_test.cpp
-  ${test_ara_com_rpc_dir}/rpc_server_test.h
+  rpc_server
+  ${test_ara_com_rpc_dir}/server.cpp
+  ${test_ara_com_rpc_dir}/skeleton.cpp
+  ${test_ara_com_rpc_dir}/skeleton.h
 )
 
 target_link_libraries(
-  rpcservertest
+  rpc_server
   ara_log
 )
 
