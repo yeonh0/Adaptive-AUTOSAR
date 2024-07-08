@@ -7,11 +7,8 @@ namespace ara
     namespace com
     {
         namespace rpc
-        {
-            AsyncBsdSocketLib::Poller SomeIpClient::defaultPoller;
-            const std::string SomeIpClient::defaultIpAddress = "127.0.0.1";
-
-            SomeIpClient::SomeIpClient(
+        {   
+            SomeIpRpcClient::SomeIpRpcClient(
                 AsyncBsdSocketLib::Poller *poller,
                 std::string ipAddress,
                 uint16_t port,
@@ -21,15 +18,28 @@ namespace ara
             {
             }
 
-            void SomeIpClient::SendRpcMessage(uint16_t serviceId, uint16_t methodId, uint16_t clientId, const std::vector<uint8_t> &rpcPayload)
+            // handleResponse : Change Session ID
+            void SomeIpRpcClient::handleResponse(const someip::SomeIpMessage &response) const
             {
-                // RpcClient::Send -> Send SOME/IP RPC Msg
+                LastSessionId = response.SessionId();
+            }
+
+            void SomeIpRpcClient::callMethodWithReply(uint16_t serviceId, uint16_t methodId, uint16_t clientId, const std::vector<uint8_t> &rpcPayload)
+            {
+                // Serialize -> SOMEIP Msg & Msg Queue in
                 RpcClient::Send(serviceId, methodId, clientId, rpcPayload);
 
                 // SocketRpcClient::onSend -> Send TCP Msg in Msg Queue
                 onSend();
+                cout << "Client - Send RPC Message" << endl;
 
-                cout << "send completed" << endl;
+                // Receive Msg -> Check payload and call handler
+                onReceive();
+            }
+
+            void SomeIpRpcClient::setHandler(uint16_t serviceId, uint16_t methodId, HandlerType handler)
+            {
+                RpcClient::SetHandler(serviceId, methodId, handler);
             }
         }
     }

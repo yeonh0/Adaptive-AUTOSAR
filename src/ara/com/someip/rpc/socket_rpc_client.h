@@ -24,8 +24,6 @@ namespace ara
                     AsyncBsdSocketLib::Poller *const mPoller;
                     AsyncBsdSocketLib::TcpClient mClient;
 
-                    void onReceive();
-
                 protected:
                     void Send(const std::vector<uint8_t> &payload) override;
 
@@ -45,6 +43,8 @@ namespace ara
                         uint8_t interfaceVersion = 1);
 
                     void onSend();
+
+                    void onReceive();
                     
                     virtual ~SocketRpcClient() override;
                 };

@@ -17,23 +17,21 @@ namespace ara
     {
         namespace rpc
         {
-            class SomeIpClient : public ara::com::someip::rpc::SocketRpcClient
+            class SomeIpRpcClient : public ara::com::someip::rpc::SocketRpcClient
             {
             private:
+                void handleResponse(const someip::SomeIpMessage &response) const;
 
             protected:
-                static AsyncBsdSocketLib::Poller defaultPoller;
-                static const std::string defaultIpAddress;
-                static const uint16_t defaultPort = 8080;
-                static const uint8_t defaultProtocolVersion = 1;
-                static const uint8_t defaultInterfaceVersion = 1;
-                
+                mutable uint16_t LastSessionId;
+
             public:
-                SomeIpClient(AsyncBsdSocketLib::Poller *poller, std::string ipAddress, uint16_t port, uint8_t protocolVersion, uint8_t interfaceVersion = 1);
-                
+                SomeIpRpcClient(AsyncBsdSocketLib::Poller *poller, std::string ipAddress, uint16_t port, uint8_t protocolVersion, uint8_t interfaceVersion = 1);
                 
                 // RpcClient::Send -> Send SOME/IP RPC Msg
-                void SendRpcMessage(uint16_t serviceId, uint16_t methodId, uint16_t clientId, const std::vector<uint8_t> &rpcPayload);
+                void callMethodWithReply(uint16_t serviceId, uint16_t methodId, uint16_t clientId, const std::vector<uint8_t> &rpcPayload);
+
+                void setHandler(uint16_t serviceId, uint16_t methodId, HandlerType handler);
             };
         }
     }
