@@ -80,13 +80,6 @@ namespace ara
                             std::make_move_iterator(_buffer.begin()),
                             std::make_move_iterator(_buffer.begin() + _receivedSize));
 
-                        std::cout << "Received Request Payload: ";
-                        for (const auto &byte : cRequestPayload)
-                        {
-                            std::cout << std::hex << std::setw(2) << std::setfill('0') << static_cast<int>(byte) << " ";
-                        }
-                        std::cout << std::dec << std::endl; // Reset to decimal formatting
-
                         std::vector<uint8_t> _responsePayload;
                         bool _handled{
                             TryInvokeHandler(cRequestPayload, _responsePayload)};

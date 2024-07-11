@@ -37,6 +37,7 @@ find_package(std_msgs REQUIRED)
 find_package(std_srvs REQUIRED)
 find_package(rcl_interfaces REQUIRED)
 find_package(rosidl_typesupport_cpp REQUIRED)
+find_package(example_interfaces REQUIRED)
 
 include_directories(
   include
@@ -318,6 +319,12 @@ add_executable(
 target_link_libraries(
   rpc_server
   ara_log
+)
+
+ament_target_dependencies(
+  rpc_server
+  rclcpp
+  example_interfaces
 )
 
 add_executable(

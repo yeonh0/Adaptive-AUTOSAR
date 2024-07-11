@@ -2,8 +2,6 @@
 
 using namespace ara::com;
 
-    std::vector<uint8_t> rpcPayload = {'H', 'e', 'l', 'l', 'o', ' ', 'S', 'O', 'M', 'E', '/', 'I', 'P'};
-
 int main() {
     // --- 1. Get a pointer to the runtime object ---
 
@@ -13,12 +11,10 @@ int main() {
     // --- 3. main loop ---
     while (1) {
         // --- 3-1. Call method 'Accelerate' ---
-        std::vector<uint8_t> rpcPayload = {10};
+        std::vector<uint8_t> rpcPayload = {10, 30, 40};
         std::vector<uint8_t> rpcResponse;
         TestProxy.SetSpeed(rpcPayload, rpcResponse);
 
-        
-        
         std::this_thread::sleep_for(std::chrono::seconds(2));
     }
 }
