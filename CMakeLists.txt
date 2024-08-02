@@ -38,14 +38,18 @@ find_package(std_srvs REQUIRED)
 find_package(rcl_interfaces REQUIRED)
 find_package(rosidl_typesupport_cpp REQUIRED)
 find_package(example_interfaces REQUIRED)
+find_package(sensor_msgs REQUIRED)
+find_package(geometry_msgs REQUIRED)
 
 include_directories(
   include
   ${rclcpp_INCLUDE_DIRS}
   ${std_msgs_INCLUDE_DIRS}
+  ${sensor_msgs_INCLUDE_DIRS}
   ${std_srvs_INCLUDE_DIRS}
   ${rcl_interfaces_INCLUDE_DIRS}
   ${rosidl_typesupport_cpp_INCLUDE_DIRS}
+  ${geometry_msgs_INCLUDE_DIRS}
 )
 
 ########################################################################
@@ -63,6 +67,9 @@ set(source_ara_log_dir
 
 set(source_ara_log_sink_dir
   "${CMAKE_SOURCE_DIR}/src/ara/log/sink")
+
+set(source_ara_com_proxy_dir
+  "${CMAKE_SOURCE_DIR}/src/ara/com/proxy")
 
 set(source_ara_com_cg_dir
   "${CMAKE_SOURCE_DIR}/src/ara/com/cg")
@@ -236,6 +243,8 @@ add_library(
    # ROS2 PUBSUB
   ${source_ara_com_ros2_pubsub_dir}/ros2_pubsub_server.h
   ${source_ara_com_ros2_pubsub_dir}/ros2_pubsub_server.cpp
+  ${source_ara_com_ros2_pubsub_dir}/ros2_pubsub_client.h
+  ${source_ara_com_ros2_pubsub_dir}/ros2_pubsub_client.cpp
 
   ${source_ara_com_someip_pubsub_fsm_dir}/service_down_state.h
   ${source_ara_com_someip_pubsub_fsm_dir}/service_down_state.cpp
@@ -272,9 +281,12 @@ add_library(
   ${source_ara_com_someip_sd_fsm_dir}/service_ready_state.cpp
   ${source_ara_com_someip_sd_fsm_dir}/service_seen_state.h
   ${source_ara_com_someip_sd_fsm_dir}/service_seen_state.cpp
-)
+  
+  # Proxy
+  ${source_ara_com_proxy_dir}/events/SampleType.cpp
+  )
 
-target_link_libraries(
+  target_link_libraries(
   ara_com
   async_bsd_socket_lib
   ${rclcpp_LIBRARIES}
@@ -282,6 +294,7 @@ target_link_libraries(
   ${rcl_interfaces_LIBRARIES}
   ${std_srvs_LIBRARIES}
   ${rosidl_typesupport_cpp_LIBRARIES}
+  ${sensor_msgs_LIBRARIES}
 )
 
 target_link_libraries(
@@ -307,6 +320,25 @@ ament_target_dependencies(
   rclcpp
   std_msgs
   rcl_interfaces
+)
+
+add_executable(
+  pubsubclient
+  ${test_ara_com_pubsub_dir}/client.cpp
+  ${test_ara_com_pubsub_dir}/AhrsServiceProxy.cpp
+  ${test_ara_com_pubsub_dir}/AhrsServiceProxy.h
+)
+
+target_link_libraries(
+  pubsubclient
+  ara_log
+)
+
+ament_target_dependencies(
+  pubsubclient
+  rclcpp
+  geometry_msgs
+  sensor_msgs
 )
 
 add_executable(

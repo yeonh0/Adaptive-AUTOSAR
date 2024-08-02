@@ -11,7 +11,7 @@ namespace ara
                 ROS2PubSubServer::ROS2PubSubServer()
                 {
                     rclcpp::init(0, nullptr);
-                    ros_node = rclcpp::Node::make_shared("ros2_pubsub_node");
+                    ros_node = rclcpp::Node::make_shared("ros2_pubsub_server");
                     ros_publisher = ros_node->create_publisher<std_msgs::msg::ByteMultiArray>("pubsub_topic", 10);
                 }
 
