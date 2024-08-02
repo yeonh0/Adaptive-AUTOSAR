@@ -12,7 +12,7 @@
                 {
                 }
 
-                void ROS2PubSubClient::topic_callback(const sensor_msgs::msg::Imu::SharedPtr msg) const
+                void ROS2PubSubClient::topic_callback(const std::shared_ptr<const sensor_msgs::msg::Imu> msg) const
                 {             
                     sample->orientation[0] = msg->orientation.x;
                     sample->orientation[1] = msg->orientation.y;

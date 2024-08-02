@@ -25,7 +25,7 @@ namespace ara
 
                     ~ROS2PubSubClient();
 
-                    void topic_callback(const sensor_msgs::msg::Imu::SharedPtr msg) const;
+                    void topic_callback(const std::shared_ptr<const sensor_msgs::msg::Imu> msg) const;
 
                     void startClient();
 
