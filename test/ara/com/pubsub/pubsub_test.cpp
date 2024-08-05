@@ -15,6 +15,8 @@ namespace ara
             const uint16_t PubServerTest::cPort = 10001;
             const int PubServerTest::cWaitingDuration = 100;
 
+            AsyncBsdSocketLib::Poller poller;
+    
             // Constructor definition
             PubServerTest::PubServerTest() 
                 : Server(&mNetworkLayer,
@@ -23,7 +25,10 @@ namespace ara
                             cMajorVersion,
                             cEventgroupId,
                             helper::Ipv4Address(224, 0, 0, 0),
-                            cPort), 
+                            cPort, 
+                            &poller,
+                            "172.24.125.198", 
+                            "225.255.240.0"), 
                     Client(&mNetworkLayer, cCounter)
             {
                 ros2Server = std::make_shared<ros2::pubsub::ROS2PubSubServer>();  // ROS2PubSubServer 초기화

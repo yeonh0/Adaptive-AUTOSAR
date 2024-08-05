@@ -342,6 +342,18 @@ ament_target_dependencies(
 )
 
 add_executable(
+  pubsubserver
+  ${test_ara_com_pubsub_dir}/server.cpp
+  ${test_ara_com_pubsub_dir}/skeleton.cpp
+  ${test_ara_com_pubsub_dir}/skeleton.h
+)
+
+target_link_libraries(
+  pubsubserver
+  ara_log
+)
+
+add_executable(
   rpc_server
   ${test_ara_com_rpc_dir}/server.cpp
   ${test_ara_com_rpc_dir}/skeleton.cpp

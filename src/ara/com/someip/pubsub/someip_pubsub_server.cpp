@@ -9,6 +9,7 @@ namespace ara
         {
             namespace pubsub
             {
+                // Add arguments, change constructor
                 SomeIpPubSubServer::SomeIpPubSubServer(
                     helper::NetworkLayer<sd::SomeIpSdMessage> *networkLayer,
                     uint16_t serviceId,
@@ -16,13 +17,19 @@ namespace ara
                     uint8_t majorVersion,
                     uint16_t eventgroupId,
                     helper::Ipv4Address ipAddress,
-                    uint16_t port) : mCommunicationLayer{networkLayer},
-                                     mServiceId{serviceId},
-                                     mInstanceId{instanceId},
-                                     mMajorVersion{majorVersion},
-                                     mEventgroupId{eventgroupId},
-                                     mEndpointIp{ipAddress},
-                                     mEndpointPort{port}
+                    uint16_t port, 
+                    AsyncBsdSocketLib::Poller *poller,
+                    const std::string &nicIpAddress, 
+                    const std::string &multicastGroup) 
+                                : mCommunicationLayer{networkLayer},
+                                    mServiceId{serviceId},
+                                    mInstanceId{instanceId},
+                                    mMajorVersion{majorVersion},
+                                    mEventgroupId{eventgroupId},
+                                    mEndpointIp{ipAddress},
+                                    mEndpointPort{port},
+                                    mPoller{poller},
+                                    mNetworkLayer(mPoller, nicIpAddress, multicastGroup, port)
                 {
                     mStateMachine.Initialize({&mServiceDownState,
                                               &mNotSubscribedState,
@@ -115,6 +122,7 @@ namespace ara
 
                     _acknowledgeMessage.AddEntry(std::move(_acknowledgeEntry));
                     mCommunicationLayer->Send(_acknowledgeMessage);
+                    mNetworkLayer.Send(_acknowledgeMessage);
                 }
 
                 void SomeIpPubSubServer::SendMessageToEventGroup(const SomeIpPubsubMessage &message)
