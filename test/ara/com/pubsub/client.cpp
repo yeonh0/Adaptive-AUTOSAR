@@ -31,7 +31,7 @@ void processLastIMUEvents(std::deque<std::shared_ptr<const ara::com::proxy::even
 
 // Process Event
 void handleIMUEventReception() {
-    myAhrsProxy->GetNewSamples(
+    myAhrsProxy->getNewSamples(
     [](std::shared_ptr<ara::com::proxy::events::BrakeEvent::SampleType> samplePtr) {
         if(samplePtr->active) {
             lastNActiveSamples.push_back(std::move(samplePtr));
@@ -43,25 +43,23 @@ void handleIMUEventReception() {
 }
 
 int main(int argc, char** argv) {
-    // Find Service: Get Handlers of Service Instance
-    bool foundServiceInstance = true;
-    // If Find Instance Handler
-    if(foundServiceInstance) {
-        // Create Proxy: Using Service Instance Handler
-        myAhrsProxy = std::make_unique<AhrsServiceProxy>();
+     // Create Proxy: Using Service Instance Handler
+    myAhrsProxy = std::make_unique<AhrsServiceProxy>("172.24.125.198", "225.255.240.0", 33333);
 
-        // Subscribe "IMU Event" (assync)
-        myAhrsProxy->SubscribeIMUEvent(10);
-        
-        // Register Event Callback Handler
-        std::function<void()> handler = handleIMUEventReception;
-        myAhrsProxy->SetIMUEventReceiveHandler(handler);
+    // Find Service
+    myAhrsProxy->findService();
 
-        // Loop (Main Thread)
-        while(1) {
+    // Subscribe "IMU Event" (assync)
+    myAhrsProxy->subscribeIMUEvent(10);
+    
+    // Register Event Callback Handler
+    std::function<void()> handler = handleIMUEventReception;
+    myAhrsProxy->setIMUEventReceiveHandler(handler);
 
-        }
+    // Loop (Main Thread)
+    while(1) {
+        myAhrsProxy->HI();
     }
-
+    
     return 0;
 }
