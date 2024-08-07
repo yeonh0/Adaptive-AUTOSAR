@@ -37,7 +37,7 @@ namespace ara
                 someip::sd::SomeIpSdServer SDServer;
                 bool running;
 
-                static const uint16_t cServiceId = 1;
+                static const uint16_t cServiceId = 0x1234;
                 static const uint16_t cInstanceId = 1;
                 static const uint8_t cMajorVersion = 1;
                 static const uint32_t cMinorVersion = 0;

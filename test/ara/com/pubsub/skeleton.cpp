@@ -26,16 +26,17 @@ namespace ara
             }
             
             void Skeleton::Start() {
+                SDServer.Start();
                 this->running = true;
                 std::cout << "SomeIpPublisher started..." << std::endl;
             }
 
             void Skeleton::Stop() {
-                if (running)
-                    {
-                        running = false;
-                        std::cout << "SomeIpPublisher stopped." << std::endl;
-                    }
+                if (running) {
+                    running = false;
+                    std::cout << "SomeIpPublisher stopped." << std::endl;
+                }
+                SDServer.Stop();
             }
 
             void Skeleton::OfferService() {
@@ -48,18 +49,6 @@ namespace ara
                 {
                     throw std::runtime_error("Publisher is not running.");
                 }
-
-                std::cout << "Publishing data..." << std::endl;
-
-                someip::sd::SomeIpSdMessage message;
-
-                auto serviceEntry1 = entry::ServiceEntry::CreateOfferServiceEntry(12,123,124,34,1235);
-                auto serviceEntry2 = entry::ServiceEntry::CreateOfferServiceEntry(0x1234,0x345,0x00,0x00,1235);
-                message.AddEntry(std::move(serviceEntry1));
-                message.AddEntry(std::move(serviceEntry2));
-
-                mNetworkLayer.Send(message);
-                mNetworkLayer.onSend();
                 mNetworkLayer.onReceive();
             }
         }

@@ -10,6 +10,5 @@ int main() {
     hello.push_back(0xff);
     while(1) {
         testsk->Publish(hello);
-        std::this_thread::sleep_for(std::chrono::seconds(2));
     }
 }
