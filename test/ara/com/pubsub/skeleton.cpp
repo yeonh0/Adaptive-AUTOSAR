@@ -14,9 +14,9 @@ namespace ara
                 : mPoller{poller},
                   mNetworkLayer(mPoller, nicIpAddress, multicastGroup, port),
                   running(false),
-                  sdIP("172.24.125.198"),
+                  sdIP(172, 24, 125, 198),
                   SDServer(&mNetworkLayer, cServiceId, cInstanceId, 
-                  cMajorVersion, cMinorVersion, sdIP, 33333, 
+                  cMajorVersion, cMinorVersion, nicIpAddress, 33333, 
                   cInitialDelayMin, cInitialDelayMax, cRepetitionBaseDelay, 
                   cCycleOfferDelay, cRepetitionMax) {
             }

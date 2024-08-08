@@ -48,6 +48,7 @@ namespace ara
                 static const int cCycleOfferDelay = 100;
 
                 helper::Ipv4Address sdIP;
+                const std::string cIP = "172.24.125.198";
                 static const uint16_t cPort = 33333;
             };
         }
