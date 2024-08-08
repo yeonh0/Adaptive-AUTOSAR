@@ -286,7 +286,8 @@ add_library(
   ${source_ara_com_someip_sd_fsm_dir}/service_seen_state.cpp
   
   # Proxy
-  ${source_ara_com_proxy_dir}/events/SampleType.cpp
+  ${source_ara_com_proxy_dir}/events/IMUSampleType.cpp
+  ${source_ara_com_proxy_dir}/events/EncoderSampleType.cpp
   )
 
   target_link_libraries(
@@ -330,6 +331,8 @@ add_executable(
   ${test_ara_com_pubsub_dir}/client.cpp
   ${test_ara_com_proxy_dir}/AhrsServiceProxy.cpp
   ${test_ara_com_proxy_dir}/AhrsServiceProxy.h
+  ${test_ara_com_proxy_dir}/EncoderServiceProxy.cpp
+  ${test_ara_com_proxy_dir}/EncoderServiceProxy.h
 )
 
 target_link_libraries(
