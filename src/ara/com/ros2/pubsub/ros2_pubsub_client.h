@@ -3,7 +3,7 @@
 
 #include "rclcpp/rclcpp.hpp"
 #include "sensor_msgs/msg/imu.hpp"
-#include "../../../../src/ara/com/proxy/events/SampleType.cpp"
+#include "../../../../src/ara/com/proxy/events/IMUSampleType.cpp"
 
 #include <deque>
 #include <array>
@@ -33,14 +33,14 @@ namespace ara
 
                     void setCallback(std::function<void()>& handler);
 
-                    std::shared_ptr<ara::com::proxy::events::BrakeEvent::SampleType> fetchsample();
+                    std::shared_ptr<ara::com::proxy::events::IMUEvent::IMUSampleType> fetchsample();
 
                 private:
                     rclcpp::Node::SharedPtr ros_node;
                     rclcpp::Subscription<sensor_msgs::msg::Imu>::SharedPtr ros_subscriber;
                     std::function<void()> callbackhandler;
                     std::thread ros2Thread;
-                    std::shared_ptr<ara::com::proxy::events::BrakeEvent::SampleType> sample;
+                    std::shared_ptr<ara::com::proxy::events::IMUEvent::IMUSampleType> sample;
                 };
             }
         }

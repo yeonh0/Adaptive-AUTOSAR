@@ -8,7 +8,7 @@
           {
               namespace pubsub
               {
-                ROS2PubSubClient::ROS2PubSubClient() : sample(std::make_shared<ara::com::proxy::events::BrakeEvent::SampleType>())
+                ROS2PubSubClient::ROS2PubSubClient() : sample(std::make_shared<ara::com::proxy::events::IMUEvent::IMUSampleType>())
                 {
                 }
 
@@ -55,7 +55,7 @@
                     callbackhandler = handler;
                 }
 
-                std::shared_ptr<ara::com::proxy::events::BrakeEvent::SampleType> ROS2PubSubClient::fetchsample() {
+                std::shared_ptr<ara::com::proxy::events::IMUEvent::IMUSampleType> ROS2PubSubClient::fetchsample() {
                     return this->sample;
                 }
               }
