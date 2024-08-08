@@ -1,20 +1,20 @@
-#include "AhrsServiceProxy.h"
+#include "../proxy/AhrsServiceProxy.h"
+#include "../proxy/EncoderServiceProxy.h"
 
-using namespace ara::com::pubsub;
+using namespace ara::com;
 using Float64Array3 = std::array<double, 3>;
 
-// AHRS Proxy
-std::unique_ptr<AhrsServiceProxy> myAhrsProxy;
+// Proxy
+std::unique_ptr<proxy::EncoderServiceProxy> myEncoderProxy;
+std::unique_ptr<proxy::AhrsServiceProxy> myAhrsProxy;
 
 // IMU Event Sample Queue
-//using SamplePtr = std::shared_ptr<const proxy::events::BrakeEvent::SampleType>;
-//std::deque<SamplePtr> lastNActiveSamples;
-std::deque<std::shared_ptr<const ara::com::proxy::events::BrakeEvent::SampleType>> lastNActiveSamples;
+std::deque<std::shared_ptr<const ara::com::proxy::events::EncoderEvent::EncoderSampleType>> EncoderlastNActiveSamples;
+std::deque<std::shared_ptr<const ara::com::proxy::events::IMUEvent::IMUSampleType>> IMUlastNActiveSamples;
 
-// Event Handler Function
-void processLastIMUEvents(std::deque<std::shared_ptr<const ara::com::proxy::events::BrakeEvent::SampleType>>& samples) {
+// Eventimu Function
+void processLastIMUEvents(std::deque<std::shared_ptr<const ara::com::proxy::events::IMUEvent::IMUSampleType>>& samples) {
     if (!samples.empty()) {
-        //std::cout << samples[0]->angular_velocity[0] << " " << samples[0]->angular_velocity[1] << " " << samples[0]->angular_velocity[2] << std::endl;
         auto samplePtr = samples.front();
         samples.pop_front();
 
@@ -29,36 +29,65 @@ void processLastIMUEvents(std::deque<std::shared_ptr<const ara::com::proxy::even
     }
 }
 
+void processLastEncoderEvents(std::deque<std::shared_ptr<const ara::com::proxy::events::EncoderEvent::EncoderSampleType>>& samples) {
+    if (!samples.empty()) {
+        auto samplePtr = samples.front();
+        samples.pop_front();
+
+        Float64Array3 _value = samplePtr->encoder_value;
+
+        std::cout << "Encoder: " << _value[0] << " -- " << _value[1] << " -- " << _value[2] << std::endl;
+        std::cout << '\n';
+    }
+}
+
 // Process Event
 void handleIMUEventReception() {
     myAhrsProxy->getNewSamples(
-    [](std::shared_ptr<ara::com::proxy::events::BrakeEvent::SampleType> samplePtr) {
+    [](std::shared_ptr<ara::com::proxy::events::IMUEvent::IMUSampleType> samplePtr) {
         if(samplePtr->active) {
-            lastNActiveSamples.push_back(std::move(samplePtr));
-            if(lastNActiveSamples.size() > 10) 
-                lastNActiveSamples.pop_front();
+            IMUlastNActiveSamples.push_back(std::move(samplePtr));
+            if(IMUlastNActiveSamples.size() > 10)
+                IMUlastNActiveSamples.pop_front();
         }
     });
-    processLastIMUEvents(lastNActiveSamples);
+    processLastIMUEvents(IMUlastNActiveSamples);
+}
+
+void handleEncoderEventReception() {
+    myEncoderProxy->getNewSamples(
+    [](std::shared_ptr<ara::com::proxy::events::EncoderEvent::EncoderSampleType> samplePtr) {
+        EncoderlastNActiveSamples.push_back(std::move(samplePtr));
+        if(EncoderlastNActiveSamples.size() > 10) 
+            EncoderlastNActiveSamples.pop_front();
+    });
+    processLastEncoderEvents(EncoderlastNActiveSamples);
 }
 
 int main(int argc, char** argv) {
-     // Create Proxy: Using Service Instance Handler
-    myAhrsProxy = std::make_unique<AhrsServiceProxy>("172.24.125.198", "225.255.240.0", 33333);
+    /* Instance Specifier from model */
+    std::vector<std::string> encoder_instspec{"172.24.125.198", "225.255.240.0", "33333"};
 
-    // Find Service
-    myAhrsProxy->findService();
+    auto encoder_handles = proxy::EncoderServiceProxy::FindService(encoder_instspec);
+    auto ahrs_handles = proxy::AhrsServiceProxy::FindService();
 
-    // Subscribe "IMU Event" (assync)
-    myAhrsProxy->subscribeIMUEvent(10);
-    
-    // Register Event Callback Handler
-    std::function<void()> handler = handleIMUEventReception;
-    myAhrsProxy->setIMUEventReceiveHandler(handler);
+    if(!encoder_handles.empty() || !ahrs_handles.empty()) {
+        myEncoderProxy = std::move(encoder_handles[0]);
+        myAhrsProxy = std::move(ahrs_handles[0]);
 
-    // Loop (Main Thread)
-    while(1) {
-        myAhrsProxy->HI();
+        myEncoderProxy->subscribeEncoderEvent(10);
+        myAhrsProxy->subscribeIMUEvent(10);
+
+        // Register Event Callback Handler
+        std::function<void()> EncoderHandler = handleEncoderEventReception;
+        myEncoderProxy->setEncoderEventReceiveHandler(EncoderHandler);
+
+        std::function<void()> IMUHandler = handleIMUEventReception;
+        myAhrsProxy->setIMUEventReceiveHandler(IMUHandler);
+    }
+
+    while(1){
+        std::this_thread::sleep_for(std::chrono::seconds(2));
     }
     
     return 0;
