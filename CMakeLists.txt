@@ -127,6 +127,9 @@ set(test_ara_com_helper_dir
 set(test_ara_com_option_dir
   "${CMAKE_SOURCE_DIR}/test/ara/com/option")
 
+  set(test_ara_com_proxy_dir
+  "${CMAKE_SOURCE_DIR}/test/ara/com/proxy")
+
 set(test_ara_com_someip_pubsub_dir
   "${CMAKE_SOURCE_DIR}/test/ara/com/someip/pubsub")
 
@@ -325,8 +328,8 @@ ament_target_dependencies(
 add_executable(
   pubsubclient
   ${test_ara_com_pubsub_dir}/client.cpp
-  ${test_ara_com_pubsub_dir}/AhrsServiceProxy.cpp
-  ${test_ara_com_pubsub_dir}/AhrsServiceProxy.h
+  ${test_ara_com_proxy_dir}/AhrsServiceProxy.cpp
+  ${test_ara_com_proxy_dir}/AhrsServiceProxy.h
 )
 
 target_link_libraries(
