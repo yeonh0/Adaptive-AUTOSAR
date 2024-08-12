@@ -1,3 +1,6 @@
+#include <future>
+#include <atomic>
+#include <iostream>
 #include "skeleton.h"
 
 namespace ara
@@ -18,17 +21,25 @@ namespace ara
                   SDServer(&mNetworkLayer, cServiceId, cInstanceId, 
                   cMajorVersion, cMinorVersion, nicIpAddress, 33333, 
                   cInitialDelayMin, cInitialDelayMax, cRepetitionBaseDelay, 
-                  cCycleOfferDelay, cRepetitionMax) {
+                  cCycleOfferDelay, cRepetitionMax),
+                  stopAsyncTask(false) {
             }
 
             Skeleton::~Skeleton() {
                 Stop();
             }
             
-            void Skeleton::Start() {
+            void Skeleton::init() {
                 SDServer.Start();
                 this->running = true;
                 std::cout << "SomeIpPublisher started..." << std::endl;
+
+                future = std::async(std::launch::async, [&]() {
+                    while(!stopAsyncTask.load()) {
+                        mNetworkLayer.onReceive();
+                        std::this_thread::sleep_for(std::chrono::milliseconds(100));
+                    }
+                });
             }
 
             void Skeleton::Stop() {
@@ -36,20 +47,26 @@ namespace ara
                     running = false;
                     std::cout << "SomeIpPublisher stopped." << std::endl;
                 }
+                stopAsyncTask.store(true);
                 SDServer.Stop();
+                if (future.valid()) {
+                    future.wait();
+                }
             }
 
-            void Skeleton::OfferService() {
-                
-            }
-
-            void Skeleton::Publish(const std::vector<uint8_t> &data)
+            void Skeleton::OfferService()
             {
                 if (!running)
                 {
                     throw std::runtime_error("Publisher is not running.");
                 }
-                mNetworkLayer.onReceive();
+
+                // Ensure there's enough time for init to complete
+                std::this_thread::sleep_for(std::chrono::seconds(2));
+
+                while(1) {
+                    mNetworkLayer.Send()
+                }
             }
         }
     }

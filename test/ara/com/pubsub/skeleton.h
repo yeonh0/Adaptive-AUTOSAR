@@ -7,6 +7,7 @@
 #include <stdexcept>
 #include <thread>
 #include <chrono>
+#include <atomic>
 
 #include "asyncbsdsocket/poller.h"
 #include "../../../../src/ara/com/someip/sd/sd_network_layer.h"
@@ -14,6 +15,7 @@
 #include "../../../../src/ara/com/entry/service_entry.h"
 #include "../../../../src/ara/com/someip/sd/someip_sd_server.h"
 #include "../../../../src/ara/com/helper/machine_state.h"
+#include "../../../../src/ara/com/someip/pubsub/someip_pubsub_message.h"
 
 namespace ara
 {
@@ -26,10 +28,9 @@ namespace ara
             public:
                 Skeleton(AsyncBsdSocketLib::Poller *poller, const std::string &nicIpAddress, const std::string &multicastGroup, uint16_t port);
                 ~Skeleton();
-                void Start();
+                void init();
                 void Stop();
                 void OfferService();
-                void Publish(const std::vector<uint8_t> &data);
                 
             private:
                 AsyncBsdSocketLib::Poller *const mPoller;
@@ -50,6 +51,9 @@ namespace ara
                 helper::Ipv4Address sdIP;
                 const std::string cIP = "172.24.125.198";
                 static const uint16_t cPort = 33333;
+
+                std::atomic<bool> stopAsyncTask;
+                std::future<void> future;
             };
         }
     }
