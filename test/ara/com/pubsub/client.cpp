@@ -66,7 +66,8 @@ void handleEncoderEventReception() {
 
 int main(int argc, char** argv) {
     /* Instance Specifier from model */
-    std::vector<std::string> encoder_instspec{"172.24.125.198", "225.255.240.0", "33333"};
+    std::string encoderProxyInstance = "EncoderProxyInstance";
+    ara::core::InstanceSpecifier encoder_instspec(encoderProxyInstance);
 
     auto encoder_handles = proxy::EncoderServiceProxy::FindService(encoder_instspec);
     auto ahrs_handles = proxy::AhrsServiceProxy::FindService();
@@ -88,6 +89,7 @@ int main(int argc, char** argv) {
 
     while(1){
         std::this_thread::sleep_for(std::chrono::seconds(2));
+        std::cout << "Hello" << std::endl;
     }
     
     return 0;
