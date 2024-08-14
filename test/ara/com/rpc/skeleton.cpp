@@ -34,7 +34,7 @@ namespace ara
                     ros2Thread.join();
                 }
                 if (someipThread.joinable()) {
-                    ros2Promise.set_value();
+                    someipPromise.set_value();
                     someipThread.join();
                 }
             }
