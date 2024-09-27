@@ -3,7 +3,6 @@
 
 #include "../../../../src/ara/com/entry/service_entry.h"
 #include "../../../../src/ara/com/helper/machine_state.h"
-#include "../../../../src/ara/com/someip/pubsub/someip_pubsub_client.h"
 #include "../../../../src/ara/com/proxy/events/EncoderSampleType.cpp"
 #include "../../../../src/ara/core/instance_specifier.h"
 #include "vsomeip/vsomeip.hpp"
@@ -12,6 +11,7 @@
 #include <deque>
 #include <array>
 #include <iostream>
+#include <iomanip>
 
 #include <condition_variable>
 #include <thread>
@@ -53,7 +53,6 @@ namespace ara
                 void getNewSamples(std::function<void(std::shared_ptr<ara::com::proxy::events::EncoderEvent::EncoderSampleType>)> callback);
 
             private:
-                std::shared_ptr<ara::com::someip::pubsub::SomeIpPubSubClient> SomeIpPubSubClient;
                 std::thread someipThread;
                 std::thread subscriberThread;
 

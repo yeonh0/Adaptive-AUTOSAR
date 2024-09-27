@@ -1,12 +1,23 @@
 #include "skeleton.h"
+using namespace ara::com;
 
-int main() {
-    AsyncBsdSocketLib::Poller poller;
-    std::unique_ptr testsk = std::make_unique<ara::com::pubsub::Skeleton>(&poller, "172.24.125.198", "225.255.240.0", 33333);
-    
-    testsk->init();
+int main(int argc, char** argv) {
+    // read instanceId from commandline
+    ara::core::InstanceSpecifier instanceIds(argv[1]);
+    std::unique_ptr myEncoderService = std::make_unique<ara::com::pubsub::EncoderServiceSkeleton>(instanceIds);
 
-    testsk->OfferService();
+    // do some service specific initialization here ....
+    myEncoderService->init();
 
-    testsk->Stop();
+    // now service instance is ready -> make it visible/available
+    myEncoderService->OfferService();
+
+    // go into some wait state in main thread - waiting for AppExecMgr
+    // signals or the like ....
+    while(1) {
+        std::cout << "Server Running ..." << '\n';
+        std::this_thread::sleep_for(std::chrono::seconds(2));
+    }
+
+    return 0;
 }

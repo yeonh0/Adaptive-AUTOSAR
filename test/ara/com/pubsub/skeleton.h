@@ -9,13 +9,15 @@
 #include <chrono>
 #include <atomic>
 
-#include "asyncbsdsocket/poller.h"
-#include "../../../../src/ara/com/someip/sd/sd_network_layer.h"
 #include "../../../../src/ara/com/someip/sd/someip_sd_message.h"
 #include "../../../../src/ara/com/entry/service_entry.h"
-#include "../../../../src/ara/com/someip/sd/someip_sd_server.h"
 #include "../../../../src/ara/com/helper/machine_state.h"
 #include "../../../../src/ara/com/someip/pubsub/someip_pubsub_message.h"
+
+#include "../../../../src/ara/core/instance_specifier.h"
+#include "../../../../src/ara/core/result.h"
+#include "../../../../src/ara/com/proxy/events/EncoderSampleType.cpp"
+#include "vsomeip/vsomeip.hpp"
 
 namespace ara
 {
@@ -23,37 +25,30 @@ namespace ara
     {
         namespace pubsub
         {
-            class Skeleton
+            class EncoderServiceSkeleton
             {
             public:
-                Skeleton(AsyncBsdSocketLib::Poller *poller, const std::string &nicIpAddress, const std::string &multicastGroup, uint16_t port);
-                ~Skeleton();
+                EncoderServiceSkeleton(core::InstanceSpecifier instanceId);
+                ~EncoderServiceSkeleton();
                 void init();
-                void Stop();
-                void OfferService();
+                ara::core::Result<void> OfferService();
+                void StopOfferService();
+                void runSomeip();
                 
             private:
-                AsyncBsdSocketLib::Poller *const mPoller;
-                someip::sd::SdNetworkLayer mNetworkLayer;
-                someip::sd::SomeIpSdServer SDServer;
-                bool running;
+                std::thread someipThread;
 
-                static const uint16_t cServiceId = 0x1234;
-                static const uint16_t cInstanceId = 1;
-                static const uint8_t cMajorVersion = 1;
-                static const uint32_t cMinorVersion = 0;
-                static const int cInitialDelayMin = 100;
-                static const int cInitialDelayMax = 200;
-                static const int cRepetitionBaseDelay = 200;
-                static const uint32_t cRepetitionMax = 2;
-                static const int cCycleOfferDelay = 100;
+                // vsomeip lib
+                std::shared_ptr< vsomeip::application > app;
+                std::shared_ptr<vsomeip::payload> payload;
+                std::set<vsomeip::eventgroup_t> its_groups;
 
-                helper::Ipv4Address sdIP;
-                const std::string cIP = "172.24.125.198";
-                static const uint16_t cPort = 33333;
+                proxy::events::EncoderEvent EncoderEvent;
 
-                std::atomic<bool> stopAsyncTask;
-                std::future<void> future;
+                uint16_t EVENTGROUP_ID = 0x4465;
+                uint16_t EVENT_ID = 0x8778;
+                uint16_t SERVICE_ID = 0x1234;
+                uint16_t INSTANCE_ID = 0x5678;
             };
         }
     }

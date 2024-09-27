@@ -13,13 +13,30 @@ set(CMAKE_ENABLE_EXPORTS 1)
 include(FetchContent)
 
 # Fetching Async-BSD-Socket-Lib for network abstraction
+# FetchContent_Declare(
+#   Async-BSD-Socket-Lib
+#   URL https://github.com/langroodi/Async-BSD-Socket-Lib/archive/8c84da8f4b5e7552b41a54c92acb0b4565d07024.zip
+# )
+
+# FetchContent_MakeAvailable(
+#   Async-BSD-Socket-Lib
+# )
+
+# # Fetching vsomeip for SOME/IP communication
 FetchContent_Declare(
-  Async-BSD-Socket-Lib
-  URL https://github.com/langroodi/Async-BSD-Socket-Lib/archive/8c84da8f4b5e7552b41a54c92acb0b4565d07024.zip
+  vsomeip
+  GIT_REPOSITORY https://github.com/COVESA/vsomeip.git
+  GIT_TAG 3.4.10
 )
 
-FetchContent_MakeAvailable(
-  Async-BSD-Socket-Lib
+FetchContent_MakeAvailable(vsomeip)
+
+find_package (vsomeip3 3.4.10 REQUIRED)
+find_package( Boost 1.55 COMPONENTS system thread log REQUIRED )
+
+include_directories (
+    ${Boost_INCLUDE_DIR}
+    ${VSOMEIP_INCLUDE_DIRS}
 )
 
 ########################################################################
@@ -218,27 +235,27 @@ add_library(
   ${source_ara_com_someip_dir}/someip_message.cpp
   ${source_ara_com_someip_rpc_dir}/someip_rpc_message.h
   ${source_ara_com_someip_rpc_dir}/someip_rpc_message.cpp
-  ${source_ara_com_someip_rpc_dir}/rpc_server.h
-  ${source_ara_com_someip_rpc_dir}/rpc_server.cpp
-  ${source_ara_com_someip_rpc_dir}/socket_rpc_server.h
-  ${source_ara_com_someip_rpc_dir}/socket_rpc_server.cpp
-  ${source_ara_com_someip_rpc_dir}/rpc_client.h
-  ${source_ara_com_someip_rpc_dir}/rpc_client.cpp
-  ${source_ara_com_someip_rpc_dir}/socket_rpc_client.h
-  ${source_ara_com_someip_rpc_dir}/socket_rpc_client.cpp
+  # ${source_ara_com_someip_rpc_dir}/rpc_server.h
+  # ${source_ara_com_someip_rpc_dir}/rpc_server.cpp
+  # ${source_ara_com_someip_rpc_dir}/socket_rpc_server.h
+  # ${source_ara_com_someip_rpc_dir}/socket_rpc_server.cpp
+  # ${source_ara_com_someip_rpc_dir}/rpc_client.h
+  # ${source_ara_com_someip_rpc_dir}/rpc_client.cpp
+  # ${source_ara_com_someip_rpc_dir}/socket_rpc_client.h
+  # ${source_ara_com_someip_rpc_dir}/socket_rpc_client.cpp
 
   # SOMEIP RPC
-  ${source_ara_com_someip_rpc_dir}/someip_rpc_client.h
-  ${source_ara_com_someip_rpc_dir}/someip_rpc_client.cpp
-  ${source_ara_com_someip_rpc_dir}/someip_rpc_server.h
-  ${source_ara_com_someip_rpc_dir}/someip_rpc_server.cpp
+  # ${source_ara_com_someip_rpc_dir}/someip_rpc_client.h
+  # ${source_ara_com_someip_rpc_dir}/someip_rpc_client.cpp
+  # ${source_ara_com_someip_rpc_dir}/someip_rpc_server.h
+  # ${source_ara_com_someip_rpc_dir}/someip_rpc_server.cpp
 
   # ROS2 RPC
   ${source_ara_com_ros2_rpc_dir}/ros2_rpc_server.h
   ${source_ara_com_ros2_rpc_dir}/ros2_rpc_server.cpp
 
-  ${source_ara_com_someip_pubsub_dir}/someip_pubsub_server.h
-  ${source_ara_com_someip_pubsub_dir}/someip_pubsub_server.cpp
+  # ${source_ara_com_someip_pubsub_dir}/someip_pubsub_server.h
+  # ${source_ara_com_someip_pubsub_dir}/someip_pubsub_server.cpp
   ${source_ara_com_someip_pubsub_dir}/someip_pubsub_client.h
   ${source_ara_com_someip_pubsub_dir}/someip_pubsub_client.cpp
   ${source_ara_com_someip_pubsub_dir}/someip_pubsub_message.h
@@ -262,8 +279,8 @@ add_library(
   ${source_ara_com_someip_sd_dir}/someip_sd_server.cpp
   ${source_ara_com_someip_sd_dir}/someip_sd_client.h
   ${source_ara_com_someip_sd_dir}/someip_sd_client.cpp
-  ${source_ara_com_someip_sd_dir}/sd_network_layer.h
-  ${source_ara_com_someip_sd_dir}/sd_network_layer.cpp
+  # ${source_ara_com_someip_sd_dir}/sd_network_layer.h
+  # ${source_ara_com_someip_sd_dir}/sd_network_layer.cpp
   ${source_ara_com_someip_sd_fsm_dir}/timer_set_state.h
   ${source_ara_com_someip_sd_fsm_dir}/client_service_state.h
   ${source_ara_com_someip_sd_fsm_dir}/notready_state.h
@@ -286,44 +303,29 @@ add_library(
   ${source_ara_com_someip_sd_fsm_dir}/service_seen_state.cpp
   
   # Proxy
+  ${source_ara_com_proxy_dir}/ProxyBase.cpp
+  ${source_ara_com_proxy_dir}/ProxyBase.h
   ${source_ara_com_proxy_dir}/events/IMUSampleType.cpp
   ${source_ara_com_proxy_dir}/events/EncoderSampleType.cpp
   )
 
   target_link_libraries(
   ara_com
-  async_bsd_socket_lib
   ${rclcpp_LIBRARIES}
   ${std_msgs_LIBRARIES}
   ${rcl_interfaces_LIBRARIES}
   ${std_srvs_LIBRARIES}
   ${rosidl_typesupport_cpp_LIBRARIES}
   ${sensor_msgs_LIBRARIES}
+  # vsomeip
+  vsomeip3 
+  ${Boost_LIBRARIES}
 )
 
 target_link_libraries(
   ara_log
   ara_core
   ara_com
-)
-
-add_executable(
-  pubsubtest
-  ${test_ara_com_pubsub_dir}/main.cpp
-  ${test_ara_com_pubsub_dir}/pubsub_test.cpp
-  ${test_ara_com_pubsub_dir}/pubsub_test.h
-)
-
-target_link_libraries(
-  pubsubtest
-  ara_log
-)
-
-ament_target_dependencies(
-  pubsubtest
-  rclcpp
-  std_msgs
-  rcl_interfaces
 )
 
 add_executable(
@@ -359,40 +361,40 @@ target_link_libraries(
   ara_log
 )
 
-add_executable(
-  rpc_server
-  ${test_ara_com_rpc_dir}/server.cpp
-  ${test_ara_com_rpc_dir}/skeleton.cpp
-  ${test_ara_com_rpc_dir}/skeleton.h
-)
-
-target_link_libraries(
-  rpc_server
-  ara_log
-)
-
-ament_target_dependencies(
-  rpc_server
-  rclcpp
-  example_interfaces
-)
-
-add_executable(
-  rpc_client
-  ${test_ara_com_rpc_dir}/client.cpp
-  ${test_ara_com_rpc_dir}/proxy.cpp
-  ${test_ara_com_rpc_dir}/proxy.h
-)
-
-target_link_libraries(
-  rpc_client
-  ara_log
-)
+# add_executable(
+#   rpc_server
+#   ${test_ara_com_rpc_dir}/server.cpp
+#   ${test_ara_com_rpc_dir}/skeleton.cpp
+#   ${test_ara_com_rpc_dir}/skeleton.h
+# )
 
 # target_link_libraries(
-#   rpctest
-#   rclcpp 
-#   std_srvs
+#   rpc_server
 #   ara_log
-#   rosidl_typesupport_cpp
 # )
+
+# ament_target_dependencies(
+#   rpc_server
+#   rclcpp
+#   example_interfaces
+# )
+
+# add_executable(
+#   rpc_client
+#   ${test_ara_com_rpc_dir}/client.cpp
+#   ${test_ara_com_rpc_dir}/proxy.cpp
+#   ${test_ara_com_rpc_dir}/proxy.h
+# )
+
+# target_link_libraries(
+#   rpc_client
+#   ara_log
+# )
+
+# # target_link_libraries(
+# #   rpctest
+# #   rclcpp 
+# #   std_srvs
+# #   ara_log
+# #   rosidl_typesupport_cpp
+# # )
