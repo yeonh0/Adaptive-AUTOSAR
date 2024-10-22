@@ -242,9 +242,6 @@ set(test_ara_com_someip_sd_fsm_dir
 set(test_ara_com_ros2_dir
   "${CMAKE_SOURCE_DIR}/test/ara/com/ros2")
 
-set(test_ara_com_vsomeip_dir
-  "${CMAKE_SOURCE_DIR}/test/ara/com/vsomeip")
-
 # set(test_ara_exec_dir
 #   "${CMAKE_SOURCE_DIR}/test/ara/exec")
 
@@ -358,6 +355,10 @@ add_library(
   ${source_ara_com_someip_pubsub_dir}/someip_pubsub_server.cpp
   ${source_ara_com_someip_pubsub_dir}/someip_pubsub_client.h
   ${source_ara_com_someip_pubsub_dir}/someip_pubsub_client.cpp
+  ${source_ara_com_someip_pubsub_dir}/vsomeip_pubsub_service.h
+  ${source_ara_com_someip_pubsub_dir}/vsomeip_pubsub_service.cpp
+  ${source_ara_com_someip_pubsub_dir}/vsomeip_pubsub_client.h
+  ${source_ara_com_someip_pubsub_dir}/vsomeip_pubsub_client.cpp
   ${source_ara_com_someip_pubsub_fsm_dir}/service_down_state.h
   ${source_ara_com_someip_pubsub_fsm_dir}/service_down_state.cpp
   ${source_ara_com_someip_pubsub_fsm_dir}/notsubscribed_state.h
@@ -539,26 +540,50 @@ ament_target_dependencies(
 )
 
 add_executable(
-  service
-  ${test_ara_com_vsomeip_dir}/service.cpp
+  vpubsub_service
+  ${test_ara_com_someip_pubsub_dir}/vsomeip_pubsub_service_test.cpp
 )
 
 add_executable(
-  client
-  ${test_ara_com_vsomeip_dir}/client.cpp
+  vpubsub_client
+  ${test_ara_com_someip_pubsub_dir}/vsomeip_pubsub_client_test.cpp
 )
 
 target_link_libraries(
-  service 
+  vpubsub_service
+  ara_com
   vsomeip3 
   ${Boost_LIBRARIES}
 )
 
 target_link_libraries(
-  client 
+  vpubsub_client
+  ara_com
   vsomeip3 
   ${Boost_LIBRARIES}
 )
+
+# add_executable(
+#   rpc_service
+#   ${test_ara_com_vsomeip_dir}/rpc/service.cpp
+# )
+
+# add_executable(
+#   rpc_client
+#   ${test_ara_com_vsomeip_dir}/rpc/client.cpp
+# )
+
+# target_link_libraries(
+#   rpc_service 
+#   vsomeip3 
+#   ${Boost_LIBRARIES}
+# )
+
+# target_link_libraries(
+#   rpc_client 
+#   vsomeip3 
+#   ${Boost_LIBRARIES}
+# )
 
 # target_link_libraries(
 #   ara_diag
