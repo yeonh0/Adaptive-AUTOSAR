@@ -52,12 +52,12 @@ include(FetchContent)
 FetchContent_Declare(
   vsomeip
   GIT_REPOSITORY https://github.com/COVESA/vsomeip.git
-  GIT_TAG 3.4.10
+  GIT_TAG 3.5.1
 )
 
 FetchContent_MakeAvailable(vsomeip)
 
-find_package (vsomeip3 3.4.10 REQUIRED)
+find_package (vsomeip3 3.5.1 REQUIRED)
 find_package( Boost 1.55 COMPONENTS system thread log REQUIRED )
 
 include_directories (
@@ -551,6 +551,12 @@ add_executable(
 
 target_link_libraries(
   vpubsub_service
+  ara_com
+  vsomeip3 
+  ${Boost_LIBRARIES}
+)
+
+target_link_libraries(
   ara_com
   vsomeip3 
   ${Boost_LIBRARIES}
