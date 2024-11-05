@@ -395,6 +395,12 @@ add_library(
   ${source_ara_com_someip_sd_fsm_dir}/service_seen_state.cpp
 )
 
+target_link_libraries(
+  ara_com
+  vsomeip3 
+  ${Boost_LIBRARIES}
+)
+
 # add_library(
 #   ara_sm
 #   ${source_ara_sm_dir}/states.h
@@ -551,21 +557,11 @@ add_executable(
 target_link_libraries(
   vpubsub_service
   ara_com
-  vsomeip3 
-  ${Boost_LIBRARIES}
-)
-
-target_link_libraries(
-  ara_com
-  vsomeip3 
-  ${Boost_LIBRARIES}
 )
 
 target_link_libraries(
   vpubsub_client
   ara_com
-  vsomeip3 
-  ${Boost_LIBRARIES}
 )
 
 # add_executable(
