@@ -1,6 +1,9 @@
 #ifndef SOMEIP_PUBSUB_SERVER
 #define SOMEIP_PUBSUB_SERVER
 
+#include <iostream>
+#include <iomanip>
+
 #include "../../helper/finite_state_machine.h"
 #include "../../helper/network_layer.h"
 #include "../sd/someip_sd_message.h"
@@ -9,6 +12,10 @@
 #include "./fsm/service_down_state.h"
 #include "./fsm/notsubscribed_state.h"
 #include "./fsm/subscribed_state.h"
+#include "./someip_pubsub_message.h"
+
+#include "../sd/sd_network_layer.h"
+#include "asyncbsdsocket/poller.h"
 
 namespace ara
 {
@@ -37,6 +44,9 @@ namespace ara
                     void onMessageReceived(sd::SomeIpSdMessage &&message);
                     void processEntry(const entry::EventgroupEntry *entry);
 
+                    AsyncBsdSocketLib::Poller *const mPoller;
+                    someip::sd::SdNetworkLayer mNetworkLayer;
+
                 public:
                     SomeIpPubSubServer() = delete;
                     ~SomeIpPubSubServer();
@@ -56,7 +66,12 @@ namespace ara
                         uint8_t majorVersion,
                         uint16_t eventgroupId,
                         helper::Ipv4Address ipAddress,
-                        uint16_t port);
+                        uint16_t port, 
+                    // poller
+                        AsyncBsdSocketLib::Poller *poller,
+                        const std::string &nicIpAddress, 
+                        const std::string &multicastGroup
+                        );
 
                     /// @brief Start the server
                     void Start();
@@ -64,6 +79,9 @@ namespace ara
                     /// @brief Get the current server state
                     /// @returns Server machine state
                     helper::PubSubState GetState() const noexcept;
+
+                    /// @brief Send All Subscriber
+                    void SendMessageToEventGroup(const SomeIpPubsubMessage &message);
 
                     /// @brief Stop the server
                     void Stop();

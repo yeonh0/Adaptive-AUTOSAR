@@ -5,8 +5,8 @@
 cmake_minimum_required(VERSION 3.14)
 project(Adaptive_Platform)
 
-# This AUTOSAR Adaptive Platform requires C++14
-set(CMAKE_CXX_STANDARD 14)
+# This AUTOSAR Adaptive Platform requires C++17
+set(CMAKE_CXX_STANDARD 17)
 # Enable 'rdyamic' switch to export the executable's symbols for debugging
 set(CMAKE_ENABLE_EXPORTS 1)
 
@@ -105,9 +105,33 @@ include_directories(
 
 ########################################################################
 #
-# Options:
+# Find ROS2
 
-option(build_tests "Build all the tests." ON)
+if(NOT DEFINED ENV{AMENT_PREFIX_PATH})
+  set(ENV{AMENT_PREFIX_PATH} "/opt/ros/humble")
+endif()
+list(APPEND CMAKE_PREFIX_PATH $ENV{AMENT_PREFIX_PATH})
+
+find_package(ament_cmake REQUIRED)
+find_package(rclcpp REQUIRED)
+find_package(std_msgs REQUIRED)
+find_package(std_srvs REQUIRED)
+find_package(rcl_interfaces REQUIRED)
+find_package(rosidl_typesupport_cpp REQUIRED)
+find_package(example_interfaces REQUIRED)
+find_package(sensor_msgs REQUIRED)
+find_package(geometry_msgs REQUIRED)
+
+include_directories(
+  include
+  ${rclcpp_INCLUDE_DIRS}
+  ${std_msgs_INCLUDE_DIRS}
+  ${sensor_msgs_INCLUDE_DIRS}
+  ${std_srvs_INCLUDE_DIRS}
+  ${rcl_interfaces_INCLUDE_DIRS}
+  ${rosidl_typesupport_cpp_INCLUDE_DIRS}
+  ${geometry_msgs_INCLUDE_DIRS}
+)
 
 ########################################################################
 #
@@ -222,6 +246,9 @@ set(test_ara_com_helper_dir
 
 # set(test_ara_com_option_dir
 #   "${CMAKE_SOURCE_DIR}/test/ara/com/option")
+
+  set(test_ara_com_proxy_dir
+  "${CMAKE_SOURCE_DIR}/test/ara/com/proxy")
 
 set(test_ara_com_someip_pubsub_dir
   "${CMAKE_SOURCE_DIR}/test/ara/com/someip/pubsub")
@@ -393,7 +420,11 @@ add_library(
   ${source_ara_com_someip_sd_fsm_dir}/service_ready_state.cpp
   ${source_ara_com_someip_sd_fsm_dir}/service_seen_state.h
   ${source_ara_com_someip_sd_fsm_dir}/service_seen_state.cpp
-)
+  
+  # Proxy
+  ${source_ara_com_proxy_dir}/events/IMUSampleType.cpp
+  ${source_ara_com_proxy_dir}/events/EncoderSampleType.cpp
+  )
 
 target_link_libraries(
   ara_com

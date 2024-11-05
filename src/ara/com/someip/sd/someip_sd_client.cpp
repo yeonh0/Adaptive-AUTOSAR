@@ -196,8 +196,9 @@ namespace ara
                         mOfferingLock.lock();
                         if (duration > 0)
                         {
-                            _cvStatus = mOfferingConditionVariable.wait_for(
-                                mOfferingLock, std::chrono::milliseconds(duration));
+                            mOfferingConditionVariable.wait_for(mOfferingLock, std::chrono::milliseconds(duration), [&] {
+                            return (GetState() == helper::SdClientState::ServiceReady || GetState() == helper::SdClientState::ServiceSeen);
+                        });
                         }
                         else
                         {

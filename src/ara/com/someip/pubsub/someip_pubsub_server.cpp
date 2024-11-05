@@ -9,6 +9,7 @@ namespace ara
         {
             namespace pubsub
             {
+                // Add arguments, change constructor
                 SomeIpPubSubServer::SomeIpPubSubServer(
                     helper::NetworkLayer<sd::SomeIpSdMessage> *networkLayer,
                     uint16_t serviceId,
@@ -16,13 +17,19 @@ namespace ara
                     uint8_t majorVersion,
                     uint16_t eventgroupId,
                     helper::Ipv4Address ipAddress,
-                    uint16_t port) : mCommunicationLayer{networkLayer},
-                                     mServiceId{serviceId},
-                                     mInstanceId{instanceId},
-                                     mMajorVersion{majorVersion},
-                                     mEventgroupId{eventgroupId},
-                                     mEndpointIp{ipAddress},
-                                     mEndpointPort{port}
+                    uint16_t port, 
+                    AsyncBsdSocketLib::Poller *poller,
+                    const std::string &nicIpAddress, 
+                    const std::string &multicastGroup) 
+                                : mCommunicationLayer{networkLayer},
+                                    mServiceId{serviceId},
+                                    mInstanceId{instanceId},
+                                    mMajorVersion{majorVersion},
+                                    mEventgroupId{eventgroupId},
+                                    mEndpointIp{ipAddress},
+                                    mEndpointPort{port},
+                                    mPoller{poller},
+                                    mNetworkLayer(mPoller, nicIpAddress, multicastGroup, port)
                 {
                     mStateMachine.Initialize({&mServiceDownState,
                                               &mNotSubscribedState,
@@ -56,7 +63,12 @@ namespace ara
                                 {
                                     if (_eventgroupEntry->TTL() > 0)
                                     {
-                                        // Subscription
+                                        // // Subscription
+                                        // std::cout << "Server : Received SD Message for subscription from Client with Service ID: " 
+                                        //           << _eventgroupEntry->ServiceId() << ", Instance ID: " 
+                                        //           << _eventgroupEntry->InstanceId() << ", Eventgroup ID: "
+                                        //           << _eventgroupEntry->EventgroupId() << std::endl; 
+
                                         processEntry(_eventgroupEntry);
                                     }
                                     else
@@ -110,6 +122,21 @@ namespace ara
 
                     _acknowledgeMessage.AddEntry(std::move(_acknowledgeEntry));
                     mCommunicationLayer->Send(_acknowledgeMessage);
+                    mNetworkLayer.Send(_acknowledgeMessage);
+                }
+
+                void SomeIpPubSubServer::SendMessageToEventGroup(const SomeIpPubsubMessage &message)
+                {
+                    // std::cout<<"message ID : "<<message.MessageId()<<std::endl;
+                    //mCommunicationLayer->Send(message.);
+                    std::vector<uint8_t> payload = message.Payload();
+                    // std::cout << "Payload: ";
+                    // for (const auto& byte : payload)
+                    // {
+                    //     std::cout << std::hex << std::setw(2) << std::setfill('0') << static_cast<int>(byte) << " ";
+                    // }
+                    // std::cout << std::dec << std::endl; // Reset to decimal formatting
+
                 }
 
                 void SomeIpPubSubServer::Start()

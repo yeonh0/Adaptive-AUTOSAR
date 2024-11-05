@@ -2,6 +2,9 @@
 #define SOMEIP_PUBSUB_CLIENT
 
 #include <condition_variable>
+#include <iostream>
+#include <iomanip>
+
 #include "../../entry/eventgroup_entry.h"
 #include "../../helper/network_layer.h"
 #include "../../helper/concurrent_queue.h"

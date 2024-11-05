@@ -32,8 +32,6 @@ namespace ara
                     AsyncBsdSocketLib::Poller *const mPoller;
                     AsyncBsdSocketLib::UdpClient mUdpSocket;
 
-                    void onReceive();
-                    void onSend();
 
                 public:
                     /// @brief Constructor
@@ -51,6 +49,8 @@ namespace ara
                     ~SdNetworkLayer() override;
 
                     void Send(const SomeIpSdMessage &message) override;
+                    void onReceive();
+                    void onSend();
                 };
             }
         }

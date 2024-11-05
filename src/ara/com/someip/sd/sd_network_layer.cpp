@@ -85,6 +85,7 @@ namespace ara
                 {
                     std::vector<uint8_t> _payload{message.Payload()};
                     mSendingQueue.TryEnqueue(std::move(_payload));
+                    onSend();
                 }
 
                 SdNetworkLayer::~SdNetworkLayer()

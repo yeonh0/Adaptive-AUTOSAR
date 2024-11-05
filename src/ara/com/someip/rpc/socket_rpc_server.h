@@ -5,6 +5,9 @@
 #include "../../helper/concurrent_queue.h"
 #include "./rpc_server.h"
 
+#include <iostream>
+#include <iomanip>
+
 namespace ara
 {
     namespace com
@@ -23,11 +26,11 @@ namespace ara
                     AsyncBsdSocketLib::Poller *const mPoller;
                     AsyncBsdSocketLib::TcpListener mServer;
 
+                public:
                     void onAccept();
                     void onReceive();
                     void onSend();
-
-                public:
+                    
                     /// @brief Constructor
                     /// @param poller BSD sockets poller
                     /// @param ipAddress RPC server IP address
